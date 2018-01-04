@@ -1,0 +1,78 @@
+== Current tasks
+
+TODO: transfer this list to JIRA some sunny day
+
+**Application's 'bootstrap'** 
+
+Make Maven script to produce a .zip file with
+
+ bass.jar
+ bass.cmd
+ bass.sh -- to run the jar on Windows and Linux
+ /lib -- contains all the jar dependencies 
+
+Use maven-assembly plugin to collect /lib folder. Include the names of all dependencies in bass.jar's MANIFEST. You can look how it's done in xylophone and flute projects.
+
+**CLI commands**
+
+For specification of  the three main CLI commands of bass (**import**, *plan* and **apply**), see link:README.adoc[README]. When they are fully implemented, the project is ready :-)
+
+**GRAIN==SCHEMA**
+
+Make 'SCHEMA' keyword a synonym for 'GRAIN'. This is a trivial, but very important task :-) SCHEMA lexem should be defined in the same lexical context as 'GRAIN'. I see no harm if these keywords are going to be synonims  both in Celesta and 2bass, so this can be easily done in Celesta project.
+
+
+**SQL files discovery**. 
+
+Currently Celesta discovers SQL files based on its grains folder layout model. During the parsing, we construct a map with grain names for keys and files (File class instances) for  values.
+
+In Celesta, one file is for one and only schema strictly. In 2bass, a user may want to have multiple files for a shema, up to one file for each database object. This implies a major rework for sql files discovering mechanism.
+
+There should be an alternative method for sql files discovery for 2bass. 
+
+. Given a set of folders, we are looking for all .sql files in these folders and all the subfolders. 
+
+. Files are being searched using in-depth folder tree traversal, files in parent folders first,  items in folder are alphabetically sorted.
+
+. We should **construct a map with schema names as map's keys and _composed sql scripts_ as map's values**. This map is then should be passed to the parser.
+
+.. If a file is started with CREATE SCHEMA .. VERSION ... statement, this is a beginning of schema definition.
+.. If a file is started with SET [CURRENT] SCHEMA <shema id>; this is a continuation of (existing) schema definition.
+.. If we come across SET [CURRENT] SCHEMA, but no schema created yet, we treat this as a parsing error: user must choose 'head of schema' file name so it is scanned before all 'schema continuation' files.
+.. Files should start either from CREATE SCHEMA or SET [CURRENT] SCHEMA statement, otherwise we treat this as a parsing error.
+
+
+**'Exec native' statement**
+
+This CelestaSQL statement should work only for 2bass and should be unavailiable for Celesta (using it in Celesta should raise an exception).
+
+ (EXEC|EXECUTE)  NATIVE <STRING_LITERAL> (BEFORE | AFTER) --{{
+   ...NATIVE CODE GOES HERE...
+ --}};
+
+. EXEC and EXECUTE are synonims
+. <STRING_LITERAL> (e.g.: 'Oracle', including quotes, as for any string literal) should reflect one of supported database types. We may look them up e. g. in  our DbType enum. When working with DB, we only apply  'EXEC NATIVE' blocks appropriate for current DB type. If we come across unknown DbType string literal, we issue an error.
+. --{{ }}-- is a new lexem type. We treat everything inside it as a single block of text, with no parsing and analysis. The reason why we want to introduce it is that we want to preserve keywords highlihgting in text editors working in 
+'SQL syntax mode'. So for these editors this lexem should  look like just two line-comments before and after a block of SQL text.
+. Note the semicolon after --}} : this is a usual end-of-statement character. So we are  declaring EXEC NATIVE statement in CelestaSQL jj file like any other statement.
+. Writing a correct regexp for --{{ .. --}} lexem might be not an easy task. See MULTI_LINE_COMMENT in CelestaParser.jj as a source of inspiration.
+. How should it work? We compose all EXEC NATIVE BEFORE... statements in one script and run them _before_ database update. Then we compose all EXEC NATIVE AFTER scripts and run them _after_ database update.
+. The syntax should also allow using BEFORE and AFTER in one statement, so user can group actions related to the same object. E.g.:
+ 
+ EXEC NATIVE 'PostgreSQL' BEFORE --{{
+   DROP FUNCTION....
+ --}} AFTER --{{
+   CREATE FUNCTION ...
+ --}};
+ 
+**ANSI-quoted identifiers**
+
+CelestaSQL should allow Ansi-quoted identifiers. But this feature should be availiable only for 2bass, not for Celesta. If quoted identifer is used in Celesta script, we should issue an error saying that ANSI-quoted identifiers are prohibited. 
+
+And of course in Celesta we preserve the check for the maximum length of identifier name and require every object name to be a valid Python/Java identifier.
+
+In 2base we do not apply max length restriction and do not require a name to be a valid identifier. This requires a major rework of NamedElement class. Maybe we should introduce something like 'NameValidator' interface, with different implemenation for Celesta and 2bass.
+
+**More types for fields**
+
+**TODO: think out this topic and write specification here**

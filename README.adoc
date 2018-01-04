@@ -1,0 +1,37 @@
+= 2BASS
+
+2bass is a database configuration-as-code tool that utilizes concept of idempotent DDL scripts.
+
+image::https://ci.corchestra.ru/buildStatus/icon?job=2bass/dev[link=https://ci.corchestra.ru/job/2bass/job/dev/]
+
+== Current status
+
+This project is in development phase. No binaries released yet.
+
+If you want to contribute (suggestions/feature requests are very welcome!) please feel free to contact any of the contributors.
+
+== Technologies used
+
+This is a derivative of link:https://github.com/CourseOrchestra/celesta[Celesta project], in particular, it uses link:https://corchestra.ru/wiki/index.php?title=%D0%AF%D0%B7%D1%8B%D0%BA_Celesta-SQL[CelestaSQL] (documentation is currently in Russian only, but syntax diagrams for the language are self-explanatory).
+
+== How to install
+
+Prerequisites: JRE 1.8
+
+Unzip package and make program's folder availiable on system path.
+
+== How to use
+
+* Write and modify your DB Schema using CelestaSQL, which is in fact the plain old DDL you are familiar with
+(Е. g. you should use CREATE TABLE for table definition, simply add/modify columns in the script when you need it,
+no 'ALTER' commands in schema definition script).
+
+* Use three simple commands to operate (hi, link:https://www.terraform.io/[terraform.io]!):
+
+** *bass apply* -- sync your actual DB structure with the desired structure described in your SQL files.
+All the ALTER commands are calculated and executed automatically.
+
+** *bass plan* -- do not sync structure, print planned ALTER script for review / manual exectution.
+
+** *bass import* -- generate idempotent DDL script for your existing database.
+
