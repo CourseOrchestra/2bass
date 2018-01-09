@@ -41,6 +41,27 @@ There should be an alternative method for sql files discovery for 2bass.
 .. If we come across SET [CURRENT] SCHEMA, but no schema created yet, we treat this as a parsing error: user must choose 'head of schema' file name so it is scanned before all 'schema continuation' files.
 .. Files should start either from CREATE SCHEMA or SET [CURRENT] SCHEMA statement, otherwise we treat this as a parsing error.
 
+**Checksum and dependency control on file-level, not only SCHEMA/GRAIN-level**
+
+Apparently this task should be done together with previous one and maybe even _before_ the previous one.
+
+
+This is Celesta enhancement to be inherited in 2bass.
+
+For now, Celesta assumes
+
+ one grain == one SQL script == one "atom" of structure synchronization.
+
+After a number of discussions we came to a conclusion that this should be changed to:
+
+ one grain <= many SQL script files == each file is one "atom" of structure sync
+
+This means that Celesta should scan all _*.sql files in alphabetical order in grain's folder,
+expecting 'create grain' in the beginning of the first file and 'set grain' in the beginning of other files.
+
+Besides "grains" table, we need 'files' table with a checksum stored separately for each file.
+
+The database update mechanism should perform topological sorting of files, not grains, and rely on checksums of separate files.
 
 **'Exec native' statement**
 
@@ -75,4 +96,11 @@ In 2base we do not apply max length restriction and do not require a name to be 
 
 **More types for fields**
 
-**TODO: think out this topic and write specification here**
+For CelestaSQL we should add full support for two following frequently used types:
+
+* Numeric(..,..)
+* Date with timezone
+
+TODO: think out 'type names dictionaries' feature. This feature should be available for 2bass only. In 2bass we
+might want to utilize database-specific types for fields, these types should be defined in dictionaries.
+
