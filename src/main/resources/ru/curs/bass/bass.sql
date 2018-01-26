@@ -34,7 +34,7 @@
  */
 
 /**Celesta system schema. Not for modification.*/
-create GRAIN bass version '1.0';
+create SCHEMA bass version '1.0';
 
 /**Active schemas list.*/
 create table schemas(

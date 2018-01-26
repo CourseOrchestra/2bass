@@ -46,4 +46,8 @@ public class Bass {
         }
     }
 
+    void close() {
+        connectionPool.close();
+    }
+
 }

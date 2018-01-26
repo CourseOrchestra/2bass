@@ -49,6 +49,7 @@ public class App {
             AppProperties properties = readProperties(propertiesPath);
             Bass bass = new Bass(properties);
             bassConsumer.accept(bass);
+            bass.close();
         }
     }
 
