@@ -6,7 +6,7 @@ import ru.curs.celesta.dbutils.adaptors.DBAdaptor;
 import ru.curs.celesta.dbutils.adaptors.configuration.DbAdaptorBuilder;
 import ru.curs.celesta.score.discovery.DefaultScoreDiscovery;
 
-public class Bass {
+public class Bass implements AutoCloseable {
 
     final DBAdaptor dbAdaptor;
     final DbUpdater dbUpdater;
@@ -46,6 +46,7 @@ public class Bass {
         }
     }
 
+    @Override
     void close() {
         connectionPool.close();
     }
