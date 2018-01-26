@@ -47,7 +47,7 @@ public class Bass implements AutoCloseable {
     }
 
     @Override
-    void close() {
+    public void close() {
         connectionPool.close();
     }
 
