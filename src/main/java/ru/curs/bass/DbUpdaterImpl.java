@@ -4,7 +4,10 @@ import ru.curs.celesta.CelestaException;
 import ru.curs.celesta.ConnectionPool;
 import ru.curs.celesta.dbutils.DbUpdater;
 import ru.curs.celesta.dbutils.adaptors.DBAdaptor;
+import ru.curs.celesta.dbutils.jdbc.SqlUtils;
 import ru.curs.celesta.score.Grain;
+
+import java.sql.Connection;
 
 public class DbUpdaterImpl extends DbUpdater<CallContext> {
 
@@ -31,5 +34,23 @@ public class DbUpdaterImpl extends DbUpdater<CallContext> {
     @Override
     protected String getSchemasTableName() {
         return SchemaDataAccessor.TABLE_NAME;
+    }
+
+    @Override
+    protected void beforeGrainUpdating(Grain g) throws CelestaException {
+        Connection conn = schemaCursor.callContext().getConn();
+
+        for (String sql :g.getBeforeSqlList(dbAdaptor.getType())) {
+            SqlUtils.executeUpdate(conn, sql);
+        }
+    }
+
+    @Override
+    protected void afterGrainUpdating(Grain g) throws CelestaException {
+        Connection conn = schemaCursor.callContext().getConn();
+
+        for (String sql :g.getAfterSqlList(dbAdaptor.getType())) {
+            SqlUtils.executeUpdate(conn, sql);
+        }
     }
 }
