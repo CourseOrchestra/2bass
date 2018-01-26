@@ -1,10 +1,16 @@
 package ru.curs.bass;
 
+import info.macias.kaconf.Property;
+
 public class AppProperties {
 
+    @Property("scorePath")
     private String scorePath;
+    @Property("jdbc.url")
     private String jdbcUrl;
+    @Property("jdbc.username")
     private String jdbcUserName = "";
+    @Property("jdbc.password")
     private String jdbcPassword = "";
 
 
