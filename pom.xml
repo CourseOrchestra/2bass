@@ -57,11 +57,39 @@
         <maven.compiler.plugin.version>3.3</maven.compiler.plugin.version>
     </properties>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>ru.curs</groupId>
+                <artifactId>celesta</artifactId>
+                <version>6.1-SNAPSHOT</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <dependency>
             <groupId>ru.curs</groupId>
             <artifactId>celesta-sql</artifactId>
             <version>6.1-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>mssql-jdbc</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.oracle.weblogic</groupId>
+            <artifactId>ojdbc6</artifactId>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
@@ -141,9 +169,11 @@
                     <programs>
                         <program>
                             <mainClass>ru.curs.bass.App</mainClass>
-                            <id>2bass</id>
+                            <id>bass</id>
                         </program>
                     </programs>
+                    <repositoryName>lib</repositoryName>
+                    <repositoryLayout>flat</repositoryLayout>
                 </configuration>
                 <executions>
                     <execution>
@@ -155,6 +185,24 @@
                 </executions>
             </plugin>
 
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <descriptors>
+                        <descriptor>src/main/assembly/bin.xml</descriptor>
+                    </descriptors>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>
