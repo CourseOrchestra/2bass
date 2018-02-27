@@ -4,6 +4,7 @@ import ru.curs.celesta.*;
 import ru.curs.celesta.dbutils.DbUpdater;
 import ru.curs.celesta.dbutils.adaptors.DBAdaptor;
 import ru.curs.celesta.dbutils.adaptors.configuration.DbAdaptorBuilder;
+import ru.curs.celesta.score.ParseException;
 import ru.curs.celesta.score.discovery.DefaultScoreDiscovery;
 
 public class Bass implements AutoCloseable {
@@ -12,7 +13,7 @@ public class Bass implements AutoCloseable {
     final DbUpdater dbUpdater;
     final ConnectionPool connectionPool;
 
-    Bass(AppProperties properties) throws CelestaException {
+    Bass(AppProperties properties) throws CelestaException, ParseException {
         //SCORE
         Score score = new Score.ScoreBuilder<>(Score.class)
                 .path(properties.getScorePath())
