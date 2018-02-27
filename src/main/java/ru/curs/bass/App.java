@@ -4,6 +4,7 @@ import info.macias.kaconf.Configurator;
 import info.macias.kaconf.ConfiguratorBuilder;
 import info.macias.kaconf.sources.JavaUtilPropertySource;
 import ru.curs.celesta.*;
+import ru.curs.celesta.score.ParseException;
 
 import java.io.*;
 import java.util.HashMap;
@@ -32,7 +33,7 @@ public class App {
         TASKS.put(Task.APPLY.toString(), Bass::updateDb);
     }
 
-    public static void main(String[] args) throws CelestaException {
+    public static void main(String[] args) throws CelestaException, ParseException {
         System.out.println("Hello World!");
 
         if (args.length == 0) {

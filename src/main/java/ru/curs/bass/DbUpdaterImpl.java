@@ -6,6 +6,7 @@ import ru.curs.celesta.dbutils.DbUpdater;
 import ru.curs.celesta.dbutils.adaptors.DBAdaptor;
 import ru.curs.celesta.dbutils.jdbc.SqlUtils;
 import ru.curs.celesta.score.Grain;
+import ru.curs.celesta.score.NativeSqlElement;
 
 import java.sql.Connection;
 
@@ -40,8 +41,8 @@ public class DbUpdaterImpl extends DbUpdater<CallContext> {
     protected void beforeGrainUpdating(Grain g) throws CelestaException {
         Connection conn = schemaCursor.callContext().getConn();
 
-        for (String sql :g.getBeforeSqlList(dbAdaptor.getType())) {
-            SqlUtils.executeUpdate(conn, sql);
+        for (NativeSqlElement sqlElement : g.getBeforeSqlList(dbAdaptor.getType())) {
+            SqlUtils.executeUpdate(conn, sqlElement.getSql());
         }
     }
 
@@ -49,8 +50,8 @@ public class DbUpdaterImpl extends DbUpdater<CallContext> {
     protected void afterGrainUpdating(Grain g) throws CelestaException {
         Connection conn = schemaCursor.callContext().getConn();
 
-        for (String sql :g.getAfterSqlList(dbAdaptor.getType())) {
-            SqlUtils.executeUpdate(conn, sql);
+        for (NativeSqlElement sqlElement :g.getAfterSqlList(dbAdaptor.getType())) {
+            SqlUtils.executeUpdate(conn, sqlElement.getSql());
         }
     }
 }

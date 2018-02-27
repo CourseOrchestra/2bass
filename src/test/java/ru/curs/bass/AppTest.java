@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import ru.curs.celesta.CelestaException;
 import ru.curs.celesta.ConnectionPool;
 import ru.curs.celesta.dbutils.adaptors.DBAdaptor;
+import ru.curs.celesta.score.ParseException;
 
 import java.sql.Connection;
 
@@ -54,7 +55,7 @@ public class AppTest {
     }
 
 
-    private void createBass(String scoreResourcePath) throws CelestaException {
+    private void createBass(String scoreResourcePath) throws CelestaException, ParseException {
         String scorePath = getClass().getResource(scoreResourcePath).getPath();
         AppProperties properties = new AppProperties();
         properties.setScorePath(scorePath);
