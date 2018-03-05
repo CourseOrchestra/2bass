@@ -24,14 +24,17 @@ public class Bass implements AutoCloseable {
         //CONN POOL
         ConnectionPoolConfiguration cpc = new ConnectionPoolConfiguration();
         cpc.setJdbcConnectionUrl(properties.getJdbcUrl());
-        cpc.setDriverClassName(DBType.H2.getDriverClassName());
+
+        DBType dbType = DBType.resolveByJdbcUrl(properties.getJdbcUrl());
+
+        cpc.setDriverClassName(dbType.getDriverClassName());
         cpc.setLogin(properties.getJdbcUserName());
         cpc.setPassword(properties.getJdbcPassword());
         this.connectionPool = ConnectionPool.create(cpc);
 
         //DBA
         DbAdaptorBuilder dac = new DbAdaptorBuilder()
-                .setDbType(DBType.H2)
+                .setDbType(dbType)
                 .setConnectionPool(connectionPool)
                 .setH2ReferentialIntegrity(true);
 
@@ -41,7 +44,9 @@ public class Bass implements AutoCloseable {
 
     void updateDb() {
         try {
+            System.out.println("Starting the updating");
             dbUpdater.updateDb();
+            System.out.println("The updating was completed");
         } catch (CelestaException e) {
             throw new BassException(e);
         }
