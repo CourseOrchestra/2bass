@@ -15,6 +15,13 @@ node {
         buildInfo.env.capture = true
     }
 
+    stage ('Docker cleanup') {
+        sh '''docker ps -a -q &> /dev/null
+if [ $? != 0 ]; then
+   docker rm $(docker ps -a -q)
+fi'''
+    }
+
     try{
         stage ('Exec Maven') {
             rtMaven.run pom: 'pom.xml', goals: 'clean install', buildInfo: buildInfo

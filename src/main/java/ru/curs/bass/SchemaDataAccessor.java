@@ -66,7 +66,7 @@ public class SchemaDataAccessor extends CsqlBasicDataAccessor<CallContext> imple
                         DataGrainElement ge = meta();
 
                         result.setGe(ge);
-                        result.setExpression(String.format(db().tableTemplate(), ge.getGrain().getName(), ge.getName()));
+                        result.setExpression(db().tableString(ge.getGrain().getName(), ge.getName()));
 
                         return result;
                         } catch (CelestaException e) {
@@ -271,7 +271,7 @@ public class SchemaDataAccessor extends CsqlBasicDataAccessor<CallContext> imple
 
 
     private Object[] currentValues() {
-        Object[] result = { id, version, length, checksum, state, lastmodified,
+        Object[] result = { id != null ? id.replace("\"", "") : null, version, length, checksum, state, lastmodified,
                 message };
         return result;
     }
