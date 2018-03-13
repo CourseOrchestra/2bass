@@ -7,6 +7,9 @@ import ru.curs.celesta.dbutils.adaptors.configuration.DbAdaptorBuilder;
 import ru.curs.celesta.score.ParseException;
 import ru.curs.celesta.score.discovery.DefaultScoreDiscovery;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
 public class Bass implements AutoCloseable {
 
     final DBAdaptor dbAdaptor;
@@ -15,13 +18,16 @@ public class Bass implements AutoCloseable {
 
     Bass(AppProperties properties) throws CelestaException, ParseException {
         //SCORE
+        System.out.printf("1. Parsing SQL scripts...");
         Score score = new Score.ScoreBuilder<>(Score.class)
                 .path(properties.getScorePath())
                 .scoreDiscovery(new DefaultScoreDiscovery())
                 .build();
         CurrentScore.set(score);
+        System.out.println("done.");
 
         //CONN POOL
+        System.out.printf("2. Connecting to %s...", properties.getJdbcUrl());
         ConnectionPoolConfiguration cpc = new ConnectionPoolConfiguration();
         cpc.setJdbcConnectionUrl(properties.getJdbcUrl());
 
@@ -39,14 +45,21 @@ public class Bass implements AutoCloseable {
                 .setH2ReferentialIntegrity(true);
 
         this.dbAdaptor = dac.createDbAdaptor();
+        try (Connection conn = connectionPool.get()) {
+            if (!dbAdaptor.isValidConnection(conn, 10))
+                throw new CelestaException("Cannot connect to database.");
+        } catch (SQLException e) {
+            throw new CelestaException(e);
+        }
         this.dbUpdater = new DbUpdaterImpl(connectionPool, score, true, this.dbAdaptor);
+        System.out.println("done.");
     }
 
     void updateDb() {
         try {
-            System.out.println("Starting the updating");
+            System.out.printf("3. Updating...");
             dbUpdater.updateDb();
-            System.out.println("The updating was completed");
+            System.out.println("done.");
         } catch (CelestaException e) {
             throw new BassException(e);
         }
@@ -56,5 +69,4 @@ public class Bass implements AutoCloseable {
     public void close() {
         connectionPool.close();
     }
-
 }

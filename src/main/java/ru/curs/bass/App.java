@@ -20,10 +20,17 @@ public class App {
 
     private static final String PROPERTIES_ENV_KEY = "BASS_PROPERTIES";
 
-    private static final String HELP = "Available commands are:\n\t\t"
-            + "import\n\t\t"
-            + "plan\n\t\t"
-            + "apply";
+    private static final String HELP =
+            "Usage: bass <command> [properties file]\n"
+                    + "Available commands are:\n"
+                    + "\tapply\t\t Build or change database structure\n"
+                    + "\timport\t\t Import actual database state to SQL scripts\n"
+                    + "\tplan\t\t Generate and show DDL execution plan\n"
+                    + "Required setup properties are:\n"
+                    + "\tscore.path\t\t Path to SQL scripts\n"
+                    + "\tjdbc.url\t\t JDBC connection URL\n"
+                    + "\tjdbc.username\t\t Database user name\n"
+                    + "\tjdbc.password\t\t Database password\n";
 
     private static final Map<String, Consumer<Bass>> TASKS = new HashMap<>();
 
@@ -34,7 +41,7 @@ public class App {
     }
 
     public static void main(String[] args) throws CelestaException, ParseException {
-        System.out.println("Hello World!");
+        System.out.println("This is 2bass.");
 
         if (args.length == 0) {
             System.out.println("No command was specified.\n" + HELP);
@@ -46,17 +53,31 @@ public class App {
         if (bassConsumer == null) {
             System.out.println("Invalid command was specified.\n" + HELP);
         } else {
-            String propertiesPath = System.getenv(PROPERTIES_ENV_KEY);
-            AppProperties properties = readProperties(propertiesPath);
+
+            String propertiesPath;
+            if (args.length > 1) {
+                propertiesPath = args[1];
+            } else {
+                propertiesPath = System.getenv(PROPERTIES_ENV_KEY);
+            }
+            if (propertiesPath == null) {
+                propertiesPath = "bass.properties";
+            }
+            File propertiesFile = new File(propertiesPath);
+            if (!(propertiesFile.exists() && propertiesFile.canRead())) {
+                System.out.printf("Properties file %s does not exists or cannot be read.%n%s",
+                        propertiesFile.getAbsolutePath(), HELP);
+                return;
+            }
+            AppProperties properties = readProperties(propertiesFile);
             Bass bass = new Bass(properties);
             bassConsumer.accept(bass);
             bass.close();
         }
     }
 
-    private static AppProperties readProperties(String propertiesPath) {
 
-        File propertiesFile = new File(propertiesPath);
+    private static AppProperties readProperties(File propertiesFile) {
 
         try (FileInputStream fis = new FileInputStream(propertiesFile.getAbsolutePath())) {
             AppProperties properties = new AppProperties();
@@ -70,7 +91,7 @@ public class App {
             configurator.configure(properties);
             return properties;
         } catch (FileNotFoundException e) {
-            throw new BassException("There is no properties file on path " + propertiesPath);
+            throw new BassException("There is no properties file on path " + propertiesFile.toString());
         } catch (IOException e) {
             throw new BassException(e);
         }
