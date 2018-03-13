@@ -4,7 +4,7 @@ import info.macias.kaconf.Property;
 
 public class AppProperties {
 
-    @Property("scorePath")
+    @Property("score.path")
     private String scorePath;
     @Property("jdbc.url")
     private String jdbcUrl;

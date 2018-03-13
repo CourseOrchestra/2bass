@@ -1,26 +1,32 @@
 = 2BASS
 
+image::https://ci.corchestra.ru/buildStatus/icon?job=2bass/dev[link=https://ci.corchestra.ru/job/2bass/job/dev/]
+
 2bass is a database configuration-as-code tool that utilizes concept of idempotent DDL scripts.
 
-image::https://ci.corchestra.ru/buildStatus/icon?job=2bass/dev[link=https://ci.corchestra.ru/job/2bass/job/dev/]
+This is a derivative of link:https://github.com/CourseOrchestra/celesta[Celesta project], in particular, it uses link:https://corchestra.ru/wiki/index.php?title=%D0%AF%D0%B7%D1%8B%D0%BA_Celesta-SQL[CelestaSQL] as database definition language. Documentation for CelestaSQL is currently in Russian only, but syntax diagrams for the language are self-explanatory.
 
 == Current status
 
-This project is in development phase. No binaries released yet.
+This project is in development phase. No binaries released yet, see <<How to build>> to obtain a binary. If you want to contribute (suggestions/feature requests are very welcome!) please feel free to contact any of the contributors.
 
-If you want to contribute (suggestions/feature requests are very welcome!) please feel free to contact any of the contributors.
+== How to build
 
-== Technologies used
+You will need JDK 8 and Maven in order to build 2bass. If you want to run tests during the build, you will also need Docker to be installed. To build without running the tests, run
 
-This is a derivative of link:https://github.com/CourseOrchestra/celesta[Celesta project], in particular, it uses link:https://corchestra.ru/wiki/index.php?title=%D0%AF%D0%B7%D1%8B%D0%BA_Celesta-SQL[CelestaSQL] (documentation is currently in Russian only, but syntax diagrams for the language are self-explanatory).
+
+ mvn package -Dmaven.test.skip=true
+
+
+
+The result of the build will be `target/2bass-<VERSION>-bin.zip` file.
 
 == How to install
 
-Prerequisites: JRE 1.8
-
-Unzip package and make program's folder availiable on system path.
+Prerequisites: JRE 8. Unzip `target/2bass-<VERSION>-bin.zip` file and make `bin` folder availiable on system path. Run `bass` command and check its output.
 
 == How to use
+* Usage example is available at https://github.com/inponomarev/2bass-demo.
 
 * Write and modify your DB Schema using CelestaSQL, which is in fact the plain old DDL you are familiar with
 (Е. g. you should use CREATE TABLE for table definition, simply add/modify columns in the script when you need it,
