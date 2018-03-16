@@ -6,6 +6,8 @@ image::https://ci.corchestra.ru/buildStatus/icon?job=2bass/dev[link=https://ci.c
 
 This is a derivative of link:https://github.com/CourseOrchestra/celesta[Celesta project], in particular, it uses link:https://corchestra.ru/wiki/index.php?title=%D0%AF%D0%B7%D1%8B%D0%BA_Celesta-SQL[CelestaSQL] as database definition language. Documentation for CelestaSQL is currently in Russian only, but syntax diagrams for the language are self-explanatory.
 
+image::bass_duke.png[,200]
+
 == Current status
 
 This project is in development phase. No binaries released yet, see <<How to build>> to obtain a binary. If you want to contribute (suggestions/feature requests are very welcome!) please feel free to contact any of the contributors.
@@ -40,4 +42,3 @@ All the ALTER commands are calculated and executed automatically.
 ** *bass plan* -- do not sync structure, print planned ALTER script for review / manual exectution.
 
 ** *bass import* -- generate idempotent DDL script for your existing database.
-
