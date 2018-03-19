@@ -2,7 +2,7 @@ package ru.curs.bass;
 
 import org.junit.jupiter.api.AfterEach;
 
-public class H2ApplyTest extends ApplyTest {
+public class H2BassTest extends BassTest {
 
     @AfterEach
      void afterEach() throws Exception {

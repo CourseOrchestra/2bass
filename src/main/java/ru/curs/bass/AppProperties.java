@@ -12,6 +12,10 @@ public class AppProperties {
     private String jdbcUserName = "";
     @Property("jdbc.password")
     private String jdbcPassword = "";
+    @Property("outputFilePath")
+    private String filePath;
+
+    private App.Task task;
 
 
     public String getScorePath() {
@@ -44,5 +48,21 @@ public class AppProperties {
 
     public void setJdbcPassword(String jdbcPassword) {
         this.jdbcPassword = jdbcPassword;
+    }
+
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
+
+    public App.Task getTask() {
+        return task;
+    }
+
+    public void setTask(App.Task task) {
+        this.task = task;
     }
 }

@@ -7,7 +7,7 @@ import org.testcontainers.containers.OracleContainer;
 import java.util.Locale;
 
 
-public class OracleApplyTest extends ApplyTest {
+public class OracleBassTest extends BassTest {
 
     static {
         Locale.setDefault(Locale.US);
