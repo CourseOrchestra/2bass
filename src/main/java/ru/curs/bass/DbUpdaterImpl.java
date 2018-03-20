@@ -42,7 +42,7 @@ public class DbUpdaterImpl extends DbUpdater<CallContext> {
         Connection conn = schemaCursor.callContext().getConn();
 
         for (NativeSqlElement sqlElement : g.getBeforeSqlList(dbAdaptor.getType())) {
-            SqlUtils.executeUpdate(conn, sqlElement.getSql());
+            dbAdaptor.executeNative(conn, sqlElement.getSql());
         }
     }
 
@@ -51,7 +51,7 @@ public class DbUpdaterImpl extends DbUpdater<CallContext> {
         Connection conn = schemaCursor.callContext().getConn();
 
         for (NativeSqlElement sqlElement :g.getAfterSqlList(dbAdaptor.getType())) {
-            SqlUtils.executeUpdate(conn, sqlElement.getSql());
+            dbAdaptor.executeNative(conn, sqlElement.getSql());
         }
     }
 }

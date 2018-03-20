@@ -7,6 +7,7 @@ import ru.curs.celesta.*;
 import ru.curs.celesta.score.ParseException;
 
 import java.io.*;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -23,6 +24,7 @@ public class App {
     private static final String HELP =
             "Usage: bass <command> [properties file]\n"
                     + "Available commands are:\n"
+                    + "\tinit\t\t Init system schema\n"
                     + "\tapply\t\t Build or change database structure\n"
                     + "\timport\t\t Import actual database state to SQL scripts\n"
                     + "\tplan\t\t Generate and show DDL execution plan\n"
@@ -35,8 +37,9 @@ public class App {
     private static final Map<String, Consumer<Bass>> TASKS = new HashMap<>();
 
     static {
+        TASKS.put(Task.INIT.toString(), Bass::initSystemSchema);
         TASKS.put(Task.IMPORT.toString(), Bass::toString); //TODO:
-        TASKS.put(Task.PLAN.toString(), Bass::toString);  //TODO:
+        TASKS.put(Task.PLAN.toString(), Bass::outputDdlScript);
         TASKS.put(Task.APPLY.toString(), Bass::updateDb);
     }
 
@@ -70,6 +73,8 @@ public class App {
                 return;
             }
             AppProperties properties = readProperties(propertiesFile);
+            properties.setTask(Task.getByString(task));
+
             Bass bass = new Bass(properties);
             bassConsumer.accept(bass);
             bass.close();
@@ -99,7 +104,8 @@ public class App {
     }
 
 
-    private enum Task {
+    enum Task {
+        INIT,
         IMPORT,
         PLAN,
         APPLY;
@@ -107,6 +113,12 @@ public class App {
         @Override
         public String toString() {
             return super.toString().toLowerCase();
+        }
+
+        static Task getByString(String str) {
+            return Arrays.stream(values()).filter(
+                    v -> v.toString().equals(str)
+            ).findFirst().orElse(null);
         }
     }
 }

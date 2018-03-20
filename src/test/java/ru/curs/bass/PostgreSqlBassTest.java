@@ -2,16 +2,16 @@ package ru.curs.bass;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.testcontainers.containers.MSSQLServerContainer;
+import org.testcontainers.containers.PostgreSQLContainer;
 
-public class MySqlApplyTest extends ApplyTest {
+public class PostgreSqlBassTest extends BassTest {
 
-    MSSQLServerContainer mssql;
+    PostgreSQLContainer postgres;
 
     @BeforeEach
     void beforeEach() throws Exception {
-        mssql = new MSSQLServerContainer();
-        mssql.start();
+        postgres = new PostgreSQLContainer();
+        postgres.start();
         super.beforeEach();
     }
 
@@ -19,15 +19,16 @@ public class MySqlApplyTest extends ApplyTest {
     @AfterEach
     void afterEach() throws Exception {
         super.afterEach();
-        mssql.stop();
+        postgres.stop();
     }
 
     @Override
     AppProperties getProperties() {
         AppProperties properties = super.getProperties();
-        properties.setJdbcUrl(mssql.getJdbcUrl());
-        properties.setJdbcUserName(mssql.getUsername());
-        properties.setJdbcPassword(mssql.getPassword());
+        properties.setJdbcUrl(postgres.getJdbcUrl());
+        properties.setJdbcUserName(postgres.getUsername());
+        properties.setJdbcPassword(postgres.getPassword());
         return properties;
     }
+
 }
