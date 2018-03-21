@@ -56,6 +56,21 @@ public abstract class BassTest {
         DBAdaptor dbAdaptor = bass.dbAdaptor;
         assertSysSchema(dbAdaptor);
         assertSchema(dbAdaptor);
+
+        //Test records in schema table
+        try (
+                Connection conn = bass.connectionPool.get();
+                CallContext callContext = new CallContext(dbAdaptor, conn, bass.score);
+        ) {
+            SchemaDataAccessor accessor = new SchemaDataAccessor(callContext, false);
+            assertAll(
+                    () -> assertTrue(accessor.nextInSet()),
+                    () -> assertEquals(Score.SYSTEM_SCHEMA_NAME, accessor.getId()),
+                    () -> assertTrue(accessor.nextInSet()),
+                    () -> assertEquals("market", accessor.getId()),
+                    () -> assertFalse(accessor.nextInSet())
+            );
+        }
     }
 
     @Test
@@ -79,6 +94,20 @@ public abstract class BassTest {
         }
 
         assertSchema(dbAdaptor);
+
+        //Test that no new records were created in schemas table.
+        try (
+                Connection conn = bass.connectionPool.get();
+                CallContext callContext = new CallContext(dbAdaptor, conn, bass.score);
+        ) {
+            SchemaDataAccessor accessor = new SchemaDataAccessor(callContext, false);
+            assertAll(
+                    () -> assertTrue(accessor.nextInSet()),
+                    () -> assertFalse(accessor.nextInSet())
+            );
+            accessor.get(Score.SYSTEM_SCHEMA_NAME);
+            assertEquals(Score.SYSTEM_SCHEMA_NAME, accessor.getId());
+        }
     }
 
     private void assertSysSchema(DBAdaptor dbAdaptor) throws Exception {

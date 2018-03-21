@@ -30,6 +30,7 @@ public class SchemaDataAccessor extends CsqlBasicDataAccessor<CallContext> imple
     private String message;
 
     private final Table meta;
+    private final boolean updatingIsDisabled;
 
     final PreparedStmtHolder get;
     final MaskedStatementHolder insert;
@@ -44,8 +45,9 @@ public class SchemaDataAccessor extends CsqlBasicDataAccessor<CallContext> imple
 
 
 
-    public SchemaDataAccessor(CallContext context) throws CelestaException {
+    public SchemaDataAccessor(CallContext context, boolean updatingIsDisabled) throws CelestaException {
         super(context);
+        this.updatingIsDisabled = updatingIsDisabled;
 
         try {
             this.meta = context.getScore()
@@ -169,6 +171,8 @@ public class SchemaDataAccessor extends CsqlBasicDataAccessor<CallContext> imple
 
     @Override
     public void update() throws CelestaException {
+        if (updatingIsDisabled)
+            return;
         try (PreparedStatement stmt = update.getStatement(currentValues(), 0)) {
             stmt.execute();
         } catch (SQLException e) {
@@ -190,7 +194,8 @@ public class SchemaDataAccessor extends CsqlBasicDataAccessor<CallContext> imple
                         sb.append(", ");
                     sb.append(value == null ? "null" : value.toString());
                 }
-                throw new CelestaException("There is no %s (%s).", meta().getName(), sb.toString());
+                if (!updatingIsDisabled)
+                    throw new CelestaException("There is no %s (%s).", meta().getName(), sb.toString());
             }
         } catch (SQLException e) {
             throw new CelestaException(e);
@@ -256,6 +261,8 @@ public class SchemaDataAccessor extends CsqlBasicDataAccessor<CallContext> imple
 
     @Override
     public void insert() throws CelestaException {
+        if (updatingIsDisabled)
+            return;
         try (PreparedStatement stmt = insert.getStatement(currentValues(), 0)) {
             stmt.execute();
         } catch (SQLException e) {
@@ -263,16 +270,15 @@ public class SchemaDataAccessor extends CsqlBasicDataAccessor<CallContext> imple
         }
     }
 
-
     @Override
     public final Table meta() throws CelestaException {
         return meta;
     }
-
 
     private Object[] currentValues() {
         Object[] result = { id != null ? id.replace("\"", "") : null, version, length, checksum, state, lastmodified,
                 message };
         return result;
     }
+
 }

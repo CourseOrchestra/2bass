@@ -12,9 +12,12 @@ import java.sql.Connection;
 
 public class DbUpdaterImpl extends DbUpdater<CallContext> {
 
+    final boolean updatingIsDisabled;
+
     public DbUpdaterImpl(ConnectionPool connectionPool, Score score,
-                         boolean forceDdInitialize, DBAdaptor dbAdaptor) {
+                         boolean forceDdInitialize, DBAdaptor dbAdaptor, boolean updatingIsDisabled) {
         super(connectionPool, score, forceDdInitialize, dbAdaptor);
+        this.updatingIsDisabled = updatingIsDisabled;
     }
 
     @Override
@@ -29,7 +32,7 @@ public class DbUpdaterImpl extends DbUpdater<CallContext> {
 
     @Override
     protected void initDataAccessors(CallContext callContext) throws CelestaException {
-        schemaCursor = new SchemaDataAccessor(callContext);
+        schemaCursor = new SchemaDataAccessor(callContext, this.updatingIsDisabled);
     }
 
     @Override
