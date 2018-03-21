@@ -52,7 +52,9 @@ public class Bass implements AutoCloseable {
                 .setConnectionPool(connectionPool)
                 .setH2ReferentialIntegrity(true);
 
+        boolean updatingIsDisabled = false;
         if (properties.getTask() == App.Task.PLAN) {
+            updatingIsDisabled = true;
             try {
                 final OutputStream os;
                 if (properties.getFilePath() != null) {
@@ -79,7 +81,7 @@ public class Bass implements AutoCloseable {
         } catch (SQLException e) {
             throw new BassException(e);
         }
-        this.dbUpdater = new DbUpdaterImpl(connectionPool, score, true, this.dbAdaptor);
+        this.dbUpdater = new DbUpdaterImpl(connectionPool, score, true, this.dbAdaptor, updatingIsDisabled);
         System.out.println("done.");
     }
 
