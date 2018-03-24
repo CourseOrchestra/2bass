@@ -20,16 +20,18 @@ import java.util.Arrays;
 public abstract class BassTest {
 
     Bass bass;
+    final MockConsoleHelper ch = new MockConsoleHelper();
 
     @BeforeEach
     void beforeEach() throws Exception {
-        this.bass = new Bass(getProperties());
+        this.bass = new Bass(getProperties(), ch);
     }
 
     @AfterEach
     void afterEach() throws Exception {
         this.bass.close();
         this.bass = null;
+        assertEquals(0, ch.activePhaseCount);
     }
 
     AppProperties getProperties() {
@@ -43,7 +45,7 @@ public abstract class BassTest {
 
     @Test
     void testInit() throws Exception {
-        this.bass = new Bass(getProperties());
+        this.bass = new Bass(getProperties(), ch);
         this.bass.initSystemSchema();
         DBAdaptor dbAdaptor = bass.dbAdaptor;
         assertSysSchema(dbAdaptor);
@@ -51,7 +53,7 @@ public abstract class BassTest {
 
     @Test
     void testApply() throws Exception {
-        this.bass = new Bass(getProperties());
+        this.bass = new Bass(getProperties(), ch);
         this.bass.updateDb();
         DBAdaptor dbAdaptor = bass.dbAdaptor;
         assertSysSchema(dbAdaptor);
@@ -82,10 +84,10 @@ public abstract class BassTest {
 
         AppProperties appProperties = getProperties();
         appProperties.setTask(App.Task.PLAN);
-        this.bass = new Bass(appProperties);
+        this.bass = new Bass(appProperties, ch);
         this.bass.outputDdlScript();
 
-        OutputStreamDdlConsumer ddlConsumer = (OutputStreamDdlConsumer) this.bass.ddlConsumer;
+        ConsoleDdlConsumer ddlConsumer = (ConsoleDdlConsumer) this.bass.ddlConsumer;
 
         dbAdaptor = bass.dbAdaptor;
         try (Connection conn = bass.connectionPool.get()) {

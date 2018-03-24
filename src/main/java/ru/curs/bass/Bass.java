@@ -18,24 +18,26 @@ import java.sql.SQLException;
 
 public class Bass implements AutoCloseable {
 
+    final ConsoleHelper consoleHelper;
     final DBAdaptor dbAdaptor;
     final DbUpdater dbUpdater;
     final ConnectionPool connectionPool;
     final DdlConsumer ddlConsumer;
     final Score score;
 
-    Bass(AppProperties properties) throws CelestaException, ParseException {
+    Bass(AppProperties properties, ConsoleHelper consoleHelper) throws CelestaException, ParseException {
+        this.consoleHelper = consoleHelper;
         //SCORE
-        System.out.printf("1. Parsing SQL scripts...");
+        consoleHelper.phase("Parsing SQL scripts");
         score = new Score.ScoreBuilder<>(Score.class)
                 .path(properties.getScorePath())
                 .scoreDiscovery(new DefaultScoreDiscovery())
                 .build();
         CurrentScore.set(score);
-        System.out.println("done.");
+        consoleHelper.done();
 
         //CONN POOL
-        System.out.printf("2. Connecting to %s...", properties.getJdbcUrl());
+        consoleHelper.phase(String.format("Connecting to %s", properties.getJdbcUrl()));
         ConnectionPoolConfiguration cpc = new ConnectionPoolConfiguration();
         cpc.setJdbcConnectionUrl(properties.getJdbcUrl());
 
@@ -62,11 +64,10 @@ public class Bass implements AutoCloseable {
                     if (!f.getParentFile().exists())
                         f.mkdirs();
                     os = new FileOutputStream(f);
+                    this.ddlConsumer = new OutputStreamDdlConsumer(os);
                 } else {
-                    os = System.out;
+                    this.ddlConsumer = new ConsoleDdlConsumer(consoleHelper);
                 }
-
-                this.ddlConsumer = new OutputStreamDdlConsumer(os);
             } catch (FileNotFoundException e) {
                 throw new BassException(e);
             }
@@ -82,14 +83,14 @@ public class Bass implements AutoCloseable {
             throw new BassException(e);
         }
         this.dbUpdater = new DbUpdaterImpl(connectionPool, score, true, this.dbAdaptor, updatingIsDisabled);
-        System.out.println("done.");
+        consoleHelper.done();
     }
 
     void initSystemSchema() {
         try {
-            System.out.printf("3. Updating system schema...");
+            consoleHelper.phase("Updating system schema");
             dbUpdater.updateSystemSchema();
-            System.out.println("done.");
+            consoleHelper.done();
         } catch (CelestaException e) {
             throw new BassException(e);
         }
@@ -97,9 +98,9 @@ public class Bass implements AutoCloseable {
 
     void updateDb() {
         try {
-            System.out.printf("3. Updating...");
+            consoleHelper.phase("Updating");
             dbUpdater.updateDb();
-            System.out.println("done.");
+            consoleHelper.done();
         } catch (CelestaException e) {
             throw new BassException(e);
         }
@@ -113,9 +114,9 @@ public class Bass implements AutoCloseable {
                     return;
                 }
             }
-            System.out.println("3. Outputting...");
+            consoleHelper.phase("Outputting");
             dbUpdater.updateDb();
-            System.out.printf("done.");
+            consoleHelper.done();
         } catch (SQLException | CelestaException e) {
             throw new BassException(e);
         }

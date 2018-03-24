@@ -54,16 +54,23 @@ public class AppTest {
         );
     }
 
-
     private void createBass(String scoreResourcePath) throws CelestaException, ParseException {
         String scorePath = getClass().getResource(scoreResourcePath).getPath();
         AppProperties properties = new AppProperties();
         properties.setScorePath(scorePath);
         properties.setJdbcUrl("jdbc:h2:mem:celesta;DB_CLOSE_DELAY=-1");
 
-        this.bass = new Bass(properties);
+        MockConsoleHelper ch = new MockConsoleHelper();
+        this.bass = new Bass(properties, ch);
+
+        assertEquals(0, ch.activePhaseCount);
+        assertEquals("Parsing SQL scripts",
+                ch.messages.get(0));
+
         this.dbAdaptor = bass.dbAdaptor;
         this.cp = bass.connectionPool;
+
+
     }
 
     private boolean tableExists(Connection conn, String schemaName, String tableName) {

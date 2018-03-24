@@ -3,6 +3,7 @@ package ru.curs.bass;
 import info.macias.kaconf.Configurator;
 import info.macias.kaconf.ConfiguratorBuilder;
 import info.macias.kaconf.sources.JavaUtilPropertySource;
+import org.fusesource.jansi.AnsiConsole;
 import ru.curs.celesta.*;
 import ru.curs.celesta.score.ParseException;
 
@@ -13,6 +14,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.function.Consumer;
 
+import static org.fusesource.jansi.Ansi.ansi;
+
 
 /**
  * Hello world!
@@ -22,17 +25,17 @@ public class App {
     private static final String PROPERTIES_ENV_KEY = "BASS_PROPERTIES";
 
     private static final String HELP =
-            "Usage: bass <command> [properties file]\n"
-                    + "Available commands are:\n"
-                    + "\tinit\t\t Init system schema\n"
-                    + "\tapply\t\t Build or change database structure\n"
-                    + "\timport\t\t Import actual database state to SQL scripts\n"
-                    + "\tplan\t\t Generate and show DDL execution plan\n"
-                    + "Required setup properties are:\n"
-                    + "\tscore.path\t\t Path to SQL scripts\n"
-                    + "\tjdbc.url\t\t JDBC connection URL\n"
-                    + "\tjdbc.username\t\t Database user name\n"
-                    + "\tjdbc.password\t\t Database password\n";
+            ansi().a("Usage: bass <command> [properties file]\n")
+                    .a("Available commands are:\n")
+                    .bold().a("\tinit").reset().a("\t\t Init system schema\n")
+                    .bold().a("\tapply").reset().a("\t\t Build or change database structure\n")
+                    .bold().a("\tplan").reset().a("\t\t Generate and show DDL execution plan\n")
+                    .a("Required setup properties are:\n")
+                    .bold().a("\tscore.path").reset().a("\t\t Path to SQL scripts\n")
+                    .bold().a("\tjdbc.url").reset().a("\t\t JDBC connection URL\n")
+                    .bold().a("\tjdbc.username").reset().a("\t\t Database user name\n")
+                    .bold().a("\tjdbc.password").reset().a("\t\t Database password\n")
+                    .toString();
 
     private static final Map<String, Consumer<Bass>> TASKS = new HashMap<>();
 
@@ -43,41 +46,55 @@ public class App {
         TASKS.put(Task.APPLY.toString(), Bass::updateDb);
     }
 
-    public static void main(String[] args) throws CelestaException, ParseException {
-        System.out.println("This is 2bass.");
+    public static void main(String[] args) {
+        AnsiConsole.systemInstall();
+        ConsoleHelper ch = new ConsoleHelper(System.out);
+        try {
+            ch.info("This is 2bass.");
 
-        if (args.length == 0) {
-            System.out.println("No command was specified.\n" + HELP);
-            return;
-        }
-        String task = args[0];
-        Consumer<Bass> bassConsumer = TASKS.get(task);
-
-        if (bassConsumer == null) {
-            System.out.println("Invalid command was specified.\n" + HELP);
-        } else {
-
-            String propertiesPath;
-            if (args.length > 1) {
-                propertiesPath = args[1];
-            } else {
-                propertiesPath = System.getenv(PROPERTIES_ENV_KEY);
-            }
-            if (propertiesPath == null) {
-                propertiesPath = "bass.properties";
-            }
-            File propertiesFile = new File(propertiesPath);
-            if (!(propertiesFile.exists() && propertiesFile.canRead())) {
-                System.out.printf("Properties file %s does not exists or cannot be read.%n%s",
-                        propertiesFile.getAbsolutePath(), HELP);
+            if (args.length == 0) {
+                ch.error("No command was specified.");
+                ch.info(HELP);
                 return;
             }
-            AppProperties properties = readProperties(propertiesFile);
-            properties.setTask(Task.getByString(task));
+            String task = args[0];
+            Consumer<Bass> bassConsumer = TASKS.get(task);
 
-            Bass bass = new Bass(properties);
-            bassConsumer.accept(bass);
-            bass.close();
+            if (bassConsumer == null) {
+                ch.error("Invalid command was specified.\n");
+                ch.info(HELP);
+            } else {
+                String propertiesPath;
+                if (args.length > 1) {
+                    propertiesPath = args[1];
+                } else {
+                    propertiesPath = System.getenv(PROPERTIES_ENV_KEY);
+                }
+                if (propertiesPath == null) {
+                    propertiesPath = "bass.properties";
+                }
+                File propertiesFile = new File(propertiesPath);
+                if (!(propertiesFile.exists() && propertiesFile.canRead())) {
+                    ch.error(String.format("Properties file %s does not exists or cannot be read.%n",
+                            propertiesFile.getAbsolutePath()));
+                    ch.info(HELP);
+                    return;
+                }
+                AppProperties properties = readProperties(propertiesFile);
+                properties.setTask(Task.getByString(task));
+
+                try {
+                    Bass bass = new Bass(properties, ch);
+                    bassConsumer.accept(bass);
+                    bass.close();
+                } catch (ParseException | CelestaException | BassException e) {
+                    ch.error(e.getMessage());
+                    if (properties.isDebug())
+                        e.printStackTrace();
+                }
+            }
+        } finally {
+            AnsiConsole.systemUninstall();
         }
     }
 
