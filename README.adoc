@@ -44,10 +44,9 @@ database-specific code. See our https://github.com/inponomarev/2bass-demo[demo p
 ** *bass apply* -- sync your actual DB structure with the desired structure described in your SQL files.
 All the ALTER commands are calculated and executed automatically. You may run `apply` without running `init` previously:
 
-image::images/3_update_success.png[,800]
-
 ** *bass plan* -- does not sync structure, print planned ALTER script for review / manual exectution.
 
+image::images/3_update_success.png[,600]
 image::images/2_plan.png[,800]
 
 === If something goes wrong during database migration
