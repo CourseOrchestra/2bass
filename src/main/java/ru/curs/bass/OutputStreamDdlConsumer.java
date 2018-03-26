@@ -12,7 +12,6 @@ import java.util.List;
 public class OutputStreamDdlConsumer implements DdlConsumer {
 
     private final OutputStream os;
-    private final List<String> allStatements = new ArrayList<>();
 
     OutputStreamDdlConsumer(OutputStream os) {
         this.os = os;
@@ -23,13 +22,8 @@ public class OutputStreamDdlConsumer implements DdlConsumer {
         try {
             this.os.write((sql + ";\n").getBytes());
             this.os.flush();
-            this.allStatements.add(sql);
         } catch (IOException e) {
             throw new CelestaException(e);
         }
-    }
-
-    public List<String> getAllStatements() {
-        return this.allStatements;
     }
 }

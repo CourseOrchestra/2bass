@@ -14,6 +14,8 @@ public class AppProperties {
     private String jdbcPassword = "";
     @Property("outputFilePath")
     private String filePath;
+    @Property("debug")
+    private boolean debug;
 
     private App.Task task;
 
@@ -64,5 +66,13 @@ public class AppProperties {
 
     public void setTask(App.Task task) {
         this.task = task;
+    }
+
+    public boolean isDebug() {
+        return debug;
+    }
+
+    public void setDebug(boolean debug) {
+        this.debug = debug;
     }
 }
