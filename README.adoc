@@ -2,7 +2,7 @@
 
 image::https://ci.corchestra.ru/buildStatus/icon?job=2bass/dev[link=https://ci.corchestra.ru/job/2bass/job/dev/]
 
-2bass is a database configuration-as-code tool that utilizes concept of idempotent DDL scripts.
+2bass is a database configuration-as-code tool that utilizes concept of https://dzone.com/articles/trouble-free-database-migration-idempotence-and-co[idempotent DDL scripts].
 
 This is a derivative of link:https://github.com/CourseOrchestra/celesta[Celesta project], in particular, it uses link:https://corchestra.ru/wiki/index.php?title=%D0%AF%D0%B7%D1%8B%D0%BA_Celesta-SQL[CelestaSQL] as database definition language. Documentation for CelestaSQL is currently in Russian only, but syntax diagrams for the language are self-explanatory.
 
