@@ -19,8 +19,8 @@ import java.sql.SQLException;
 public class Bass implements AutoCloseable {
 
     private final ConsoleHelper consoleHelper;
-    private final DBAdaptor dbAdaptor;
     private final DbUpdater dbUpdater;
+    final DBAdaptor dbAdaptor;
     final ConnectionPool connectionPool;
     final DdlConsumer ddlConsumer;
     final Score score;
