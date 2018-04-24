@@ -1,6 +1,5 @@
 package ru.curs.bass;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -10,17 +9,17 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 class MockConsoleHelper extends ConsoleHelper {
 
+    List<String> messages = new ArrayList<>();
+    int activePhaseCount = 0;
+
     MockConsoleHelper() {
         super(new PrintStream(new OutputStream() {
             @Override
-            public void write(int b) throws IOException {
-
+            public void write(int b) {
+                //silently swallow anything
             }
         }));
     }
-
-    List<String> messages = new ArrayList<>();
-    int activePhaseCount = 0;
 
     @Override
     public void phase(String description) {

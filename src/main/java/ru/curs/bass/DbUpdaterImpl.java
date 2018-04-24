@@ -4,7 +4,6 @@ import ru.curs.celesta.CelestaException;
 import ru.curs.celesta.ConnectionPool;
 import ru.curs.celesta.dbutils.DbUpdater;
 import ru.curs.celesta.dbutils.adaptors.DBAdaptor;
-import ru.curs.celesta.dbutils.jdbc.SqlUtils;
 import ru.curs.celesta.score.Grain;
 import ru.curs.celesta.score.NativeSqlElement;
 
@@ -12,7 +11,7 @@ import java.sql.Connection;
 
 public class DbUpdaterImpl extends DbUpdater<CallContext> {
 
-    final boolean updatingIsDisabled;
+    private final boolean updatingIsDisabled;
 
     public DbUpdaterImpl(ConnectionPool connectionPool, Score score,
                          boolean forceDdInitialize, DBAdaptor dbAdaptor, boolean updatingIsDisabled) {
@@ -22,7 +21,7 @@ public class DbUpdaterImpl extends DbUpdater<CallContext> {
 
     @Override
     protected void processGrainMeta(Grain grain) throws CelestaException {
-
+        //do nothing in 2bass
     }
 
     @Override

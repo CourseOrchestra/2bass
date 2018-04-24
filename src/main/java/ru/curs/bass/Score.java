@@ -10,8 +10,6 @@ public class Score extends AbstractScore {
 
     private IdentifierParser identifierParser = new AnsiQuotedIdentifierParser();
 
-    public Score() {}
-
     @Override
     public IdentifierParser getIdentifierParser() {
         return identifierParser;

@@ -74,10 +74,6 @@ public class AppTest {
     }
 
     private boolean tableExists(Connection conn, String schemaName, String tableName) {
-        try {
-            return dbAdaptor.tableExists(conn, schemaName, tableName);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        return dbAdaptor.tableExists(conn, schemaName, tableName);
     }
 }
