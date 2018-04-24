@@ -40,7 +40,7 @@ database-specific code. See our https://github.com/inponomarev/2bass-demo[demo p
 
 * Use the following commands to operate:
 
-** *bass init* -- to initialize system `bass` schema in your database:
+** *bass init* -- to initialize system `bass` schema in your database.
 
 ** *bass apply* -- sync your actual DB structure with the desired structure described in your SQL files.
 All the ALTER commands are calculated and executed automatically. You may run `apply` without running `init` previously:

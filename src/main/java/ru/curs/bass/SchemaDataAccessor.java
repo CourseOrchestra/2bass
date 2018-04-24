@@ -32,16 +32,16 @@ public class SchemaDataAccessor extends CsqlBasicDataAccessor<CallContext> imple
     private final Table meta;
     private final boolean updatingIsDisabled;
 
-    final PreparedStmtHolder get;
-    final MaskedStatementHolder insert;
+    private final PreparedStmtHolder get;
+    private final MaskedStatementHolder insert;
 
-    boolean[] updateMask = new boolean[currentValues().length];
-    boolean[] nullUpdateMask = new boolean[currentValues().length];
-    final PreparedStmtHolder update;
+    private boolean[] updateMask = new boolean[currentValues().length];
+    private boolean[] nullUpdateMask = new boolean[currentValues().length];
+    private final PreparedStmtHolder update;
 
     private ResultSet cursor = null;
 
-    final PreparedStmtHolder findSet;
+    private final PreparedStmtHolder findSet;
 
 
 
@@ -63,7 +63,6 @@ public class SchemaDataAccessor extends CsqlBasicDataAccessor<CallContext> imple
                     db(),
                     conn(),
                     () -> {
-                        try {
                         FromClause result = new FromClause();
                         DataGrainElement ge = meta();
 
@@ -71,9 +70,6 @@ public class SchemaDataAccessor extends CsqlBasicDataAccessor<CallContext> imple
                         result.setExpression(db().tableString(ge.getGrain().getName(), ge.getName()));
 
                         return result;
-                        } catch (CelestaException e) {
-                            throw new RuntimeException(e);
-                        }
                     },
                     () -> new FromTerm(Collections.emptyList()),
                     () -> AlwaysTrue.TRUE,
@@ -120,12 +116,12 @@ public class SchemaDataAccessor extends CsqlBasicDataAccessor<CallContext> imple
     }
 
     @Override
-    public int getLength() {
+    public Integer getLength() {
         return length;
     }
 
     @Override
-    public void setLength(int length) {
+    public void setLength(Integer length) {
         this.length = length;
     }
 
@@ -140,12 +136,12 @@ public class SchemaDataAccessor extends CsqlBasicDataAccessor<CallContext> imple
     }
 
     @Override
-    public int getState() {
+    public Integer getState() {
         return state;
     }
 
     @Override
-    public void setState(int state) {
+    public void setState(Integer state) {
         this.state = state;
     }
 
@@ -184,8 +180,7 @@ public class SchemaDataAccessor extends CsqlBasicDataAccessor<CallContext> imple
     public void get(Object... values) throws CelestaException {
         try (PreparedStatement stmt = get.getStatement(values, 0)) {
             ResultSet rs = stmt.executeQuery();
-            boolean result = rs.next();
-            if (result) {
+            if (rs.next()) {
                 parseResult(rs);
             } else {
                 StringBuilder sb = new StringBuilder();

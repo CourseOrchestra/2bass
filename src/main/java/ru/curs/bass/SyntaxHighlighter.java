@@ -59,7 +59,7 @@ abstract class LexemHighlighter {
 }
 
 class IdentifierHighlighter extends LexemHighlighter {
-    HashSet<String> keywords = new HashSet<>(Arrays.asList(
+    private HashSet<String> keywords = new HashSet<>(Arrays.asList(
             "ACTION", "ADD", "ALTER", "AND",
             "AS", "BETWEEN", "BY", "CASCADE",
             "CONSTRAINT", "COUNT", "CREATE", "DEFAULT",

@@ -6,8 +6,6 @@ import ru.curs.celesta.dbutils.adaptors.ddl.DdlConsumer;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.List;
 
 public class OutputStreamDdlConsumer implements DdlConsumer {
 
