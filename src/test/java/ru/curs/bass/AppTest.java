@@ -69,8 +69,6 @@ public class AppTest {
 
         this.dbAdaptor = bass.dbAdaptor;
         this.cp = bass.connectionPool;
-
-
     }
 
     private boolean tableExists(Connection conn, String schemaName, String tableName) {

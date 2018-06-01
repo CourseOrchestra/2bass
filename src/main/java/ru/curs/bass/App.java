@@ -44,25 +44,29 @@ public class App {
         TASKS.put(Task.IMPORT.toString(), Bass::toString); //TODO:
         TASKS.put(Task.PLAN.toString(), Bass::outputDdlScript);
         TASKS.put(Task.APPLY.toString(), Bass::updateDb);
+        TASKS.put(Task.VALIDATE.toString(), bass -> {
+        });
     }
+
+    static ConsoleHelper consoleHelper = new ConsoleHelper(System.out);
 
     public static void main(String[] args) {
         AnsiConsole.systemInstall();
-        ConsoleHelper ch = new ConsoleHelper(System.out);
+
         try {
-            ch.info("This is 2bass.");
+            consoleHelper.info("This is 2bass.");
 
             if (args.length == 0) {
-                ch.error("No command was specified.");
-                ch.info(HELP);
+                consoleHelper.error("No command was specified.");
+                consoleHelper.info(HELP);
                 return;
             }
             String task = args[0];
             Consumer<Bass> bassConsumer = TASKS.get(task);
 
             if (bassConsumer == null) {
-                ch.error("Invalid command was specified.\n");
-                ch.info(HELP);
+                consoleHelper.error("Invalid command was specified.\n");
+                consoleHelper.info(HELP);
             } else {
                 String propertiesPath;
                 if (args.length > 1) {
@@ -75,26 +79,36 @@ public class App {
                 }
                 File propertiesFile = new File(propertiesPath);
                 if (!(propertiesFile.exists() && propertiesFile.canRead())) {
-                    ch.error(String.format("Properties file %s does not exists or cannot be read.%n",
+                    consoleHelper.error(String.format("Properties file %s does not exists or cannot be read.%n",
                             propertiesFile.getAbsolutePath()));
-                    ch.info(HELP);
+                    consoleHelper.info(HELP);
                     return;
                 }
                 AppProperties properties = readProperties(propertiesFile);
                 properties.setTask(Task.getByString(task));
 
+
                 try {
-                    Bass bass = new Bass(properties, ch);
-                    bassConsumer.accept(bass);
-                    bass.close();
+                    if (properties.getTask() == Task.VALIDATE) {
+                        consoleHelper.phase("Parsing SQL scripts");
+                        Bass.getScore(properties);
+                        consoleHelper.done();
+                    } else {
+                        Bass bass = new Bass(properties, consoleHelper);
+                        bassConsumer.accept(bass);
+                        bass.close();
+                    }
                 } catch (ParseException | CelestaException | BassException e) {
-                    ch.error(e.getMessage());
+                    consoleHelper.error(e.getMessage());
                     if (properties.isDebug())
                         e.printStackTrace();
                 }
             }
         } finally {
             AnsiConsole.systemUninstall();
+            if (consoleHelper.isError()) {
+                consoleHelper.sysExit(1);
+            }
         }
     }
 
@@ -125,7 +139,8 @@ public class App {
         INIT,
         IMPORT,
         PLAN,
-        APPLY;
+        APPLY,
+        VALIDATE;
 
         @Override
         public String toString() {

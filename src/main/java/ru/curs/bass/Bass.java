@@ -29,10 +29,7 @@ public class Bass implements AutoCloseable {
         this.consoleHelper = consoleHelper;
         //SCORE
         consoleHelper.phase("Parsing SQL scripts");
-        score = new Score.ScoreBuilder<>(Score.class)
-                .path(properties.getScorePath())
-                .scoreDiscovery(new DefaultScoreDiscovery())
-                .build();
+        score = getScore(properties);
         CurrentScore.set(score);
         consoleHelper.done();
 
@@ -86,6 +83,13 @@ public class Bass implements AutoCloseable {
         consoleHelper.done();
     }
 
+    static Score getScore(AppProperties properties) throws ParseException {
+        return new Score.ScoreBuilder<>(Score.class)
+                .path(properties.getScorePath())
+                .scoreDiscovery(new DefaultScoreDiscovery())
+                .build();
+    }
+
     void initSystemSchema() {
         try {
             consoleHelper.phase("Updating system schema");
@@ -126,4 +130,5 @@ public class Bass implements AutoCloseable {
     public void close() {
         connectionPool.close();
     }
+
 }

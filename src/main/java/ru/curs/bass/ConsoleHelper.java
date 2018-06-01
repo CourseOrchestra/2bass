@@ -7,6 +7,7 @@ import static org.fusesource.jansi.Ansi.ansi;
 public class ConsoleHelper {
     private int i = 1;
     private final PrintStream out;
+    private boolean error = false;
 
     public ConsoleHelper(PrintStream out) {
         this.out = out;
@@ -22,12 +23,25 @@ public class ConsoleHelper {
         out.println();
     }
 
+    void error() {
+        error = true;
+    }
+
     public void error(String message) {
+        error();
         out.println(ansi().fgBrightRed().a("   ERROR: ").a(message).reset());
     }
 
     public void info(String s) {
         out.println(s);
+    }
+
+    public boolean isError() {
+        return error;
+    }
+
+    public void sysExit(int rc) {
+        System.exit(rc);
     }
 }
 
