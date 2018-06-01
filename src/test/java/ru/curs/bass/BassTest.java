@@ -83,7 +83,7 @@ public abstract class BassTest {
         this.bass.close();
 
         AppProperties appProperties = getProperties();
-        appProperties.setTask(App.Task.PLAN);
+        appProperties.setCommand(App.Command.PLAN);
         this.bass = new Bass(appProperties, ch);
         this.bass.outputDdlScript();
 

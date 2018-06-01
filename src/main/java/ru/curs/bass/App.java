@@ -37,14 +37,14 @@ public class App {
                     .bold().a("\tjdbc.password").reset().a("\t\t Database password\n")
                     .toString();
 
-    private static final Map<String, Consumer<Bass>> TASKS = new HashMap<>();
+    private static final Map<String, Consumer<Bass>> COMMANDS = new HashMap<>();
 
     static {
-        TASKS.put(Task.INIT.toString(), Bass::initSystemSchema);
-        TASKS.put(Task.IMPORT.toString(), Bass::toString); //TODO:
-        TASKS.put(Task.PLAN.toString(), Bass::outputDdlScript);
-        TASKS.put(Task.APPLY.toString(), Bass::updateDb);
-        TASKS.put(Task.VALIDATE.toString(), bass -> {
+        COMMANDS.put(Command.INIT.toString(), Bass::initSystemSchema);
+        COMMANDS.put(Command.IMPORT.toString(), Bass::toString); //TODO:
+        COMMANDS.put(Command.PLAN.toString(), Bass::outputDdlScript);
+        COMMANDS.put(Command.APPLY.toString(), Bass::updateDb);
+        COMMANDS.put(Command.VALIDATE.toString(), bass -> {
         });
     }
 
@@ -61,8 +61,8 @@ public class App {
                 consoleHelper.info(HELP);
                 return;
             }
-            String task = args[0];
-            Consumer<Bass> bassConsumer = TASKS.get(task);
+            String cmd = args[0];
+            Consumer<Bass> bassConsumer = COMMANDS.get(cmd);
 
             if (bassConsumer == null) {
                 consoleHelper.error("Invalid command was specified.\n");
@@ -85,11 +85,11 @@ public class App {
                     return;
                 }
                 AppProperties properties = readProperties(propertiesFile);
-                properties.setTask(Task.getByString(task));
+                properties.setCommand(Command.getByString(cmd));
 
 
                 try {
-                    if (properties.getTask() == Task.VALIDATE) {
+                    if (properties.getCommand() == Command.VALIDATE) {
                         consoleHelper.phase("Parsing SQL scripts");
                         Bass.getScore(properties);
                         consoleHelper.done();
@@ -135,7 +135,7 @@ public class App {
     }
 
 
-    enum Task {
+    enum Command {
         INIT,
         IMPORT,
         PLAN,
@@ -147,7 +147,7 @@ public class App {
             return super.toString().toLowerCase();
         }
 
-        static Task getByString(String str) {
+        static Command getByString(String str) {
             return Arrays.stream(values()).filter(
                     v -> v.toString().equals(str)
             ).findFirst().orElse(null);

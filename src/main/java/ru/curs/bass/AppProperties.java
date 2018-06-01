@@ -17,7 +17,7 @@ public class AppProperties {
     @Property("debug")
     private boolean debug;
 
-    private App.Task task;
+    private App.Command command;
 
 
     public String getScorePath() {
@@ -60,12 +60,12 @@ public class AppProperties {
         this.filePath = filePath;
     }
 
-    public App.Task getTask() {
-        return task;
+    public App.Command getCommand() {
+        return command;
     }
 
-    public void setTask(App.Task task) {
-        this.task = task;
+    public void setCommand(App.Command cmd) {
+        this.command = cmd;
     }
 
     public boolean isDebug() {

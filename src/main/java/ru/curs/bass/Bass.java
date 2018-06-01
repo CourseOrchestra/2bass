@@ -52,7 +52,7 @@ public class Bass implements AutoCloseable {
                 .setH2ReferentialIntegrity(true);
 
         boolean updatingIsDisabled = false;
-        if (properties.getTask() == App.Task.PLAN) {
+        if (properties.getCommand() == App.Command.PLAN) {
             updatingIsDisabled = true;
             try {
                 final OutputStream os;
