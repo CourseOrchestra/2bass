@@ -49,6 +49,7 @@ fi'''
 
     stage ('Ratcheting') {
         def warningsMap = countWarnings
+        println (warningsMap)
         writeYaml file: 'target/warnings.yml', data: warningsMap
         // compareWarningMaps oldWarnings, warningsMap
     }
