@@ -16,11 +16,7 @@ import java.util.function.Consumer;
 
 import static org.fusesource.jansi.Ansi.ansi;
 
-
-/**
- * Hello world!
- */
-public class App {
+public final class App {
 
     private static final String PROPERTIES_ENV_KEY = "BASS_PROPERTIES";
 
@@ -39,6 +35,8 @@ public class App {
 
     private static final Map<String, Consumer<Bass>> COMMANDS = new HashMap<>();
 
+    static ConsoleHelper consoleHelper = new ConsoleHelper(System.out);
+
     static {
         COMMANDS.put(Command.INIT.toString(), Bass::initSystemSchema);
         COMMANDS.put(Command.IMPORT.toString(), Bass::toString); //TODO:
@@ -48,7 +46,9 @@ public class App {
         });
     }
 
-    static ConsoleHelper consoleHelper = new ConsoleHelper(System.out);
+    private App(){
+
+    }
 
     public static void main(String[] args) {
         AnsiConsole.systemInstall();

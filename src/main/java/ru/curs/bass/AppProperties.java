@@ -2,7 +2,7 @@ package ru.curs.bass;
 
 import info.macias.kaconf.Property;
 
-public class AppProperties {
+public final class AppProperties {
 
     @Property("score.path")
     private String scorePath;

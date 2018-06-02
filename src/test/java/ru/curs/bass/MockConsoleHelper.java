@@ -40,8 +40,7 @@ class MockConsoleHelper extends ConsoleHelper {
     }
 
     @Override
-    public void error(String message) {
-        error();
+    protected void errMessage(String message) {
         errConsumer.accept(message);
     }
 

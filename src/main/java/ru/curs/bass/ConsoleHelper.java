@@ -23,12 +23,12 @@ public class ConsoleHelper {
         out.println();
     }
 
-    void error() {
+    public final void error(String message) {
         error = true;
+        errMessage(message);
     }
 
-    public void error(String message) {
-        error();
+    protected void errMessage(String message){
         out.println(ansi().fgBrightRed().a("   ERROR: ").a(message).reset());
     }
 
