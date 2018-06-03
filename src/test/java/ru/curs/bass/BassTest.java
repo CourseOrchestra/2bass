@@ -24,13 +24,13 @@ public abstract class BassTest {
 
     @BeforeEach
     void beforeEach() throws Exception {
-        this.bass = new Bass(getProperties(), ch);
+        bass = new Bass(getProperties(), ch);
     }
 
     @AfterEach
     void afterEach() throws Exception {
-        this.bass.close();
-        this.bass = null;
+        bass.close();
+        bass = null;
         assertEquals(0, ch.activePhaseCount);
     }
 
@@ -45,24 +45,22 @@ public abstract class BassTest {
 
     @Test
     void testInit() throws Exception {
-        this.bass = new Bass(getProperties(), ch);
-        this.bass.initSystemSchema();
-        DBAdaptor dbAdaptor = bass.dbAdaptor;
+        bass.initSystemSchema();
+        DBAdaptor dbAdaptor = bass.getDbAdaptor();
         assertSysSchema(dbAdaptor);
     }
 
     @Test
     void testApply() throws Exception {
-        this.bass = new Bass(getProperties(), ch);
         this.bass.updateDb();
-        DBAdaptor dbAdaptor = bass.dbAdaptor;
+        DBAdaptor dbAdaptor = bass.getDbAdaptor();
         assertSysSchema(dbAdaptor);
         assertSchema(dbAdaptor);
 
         //Test records in schema table
         try (
-                Connection conn = bass.connectionPool.get();
-                CallContext callContext = new CallContext(dbAdaptor, conn, bass.score);
+                Connection conn = bass.getConnectionPool().get();
+                CallContext callContext = new CallContext(dbAdaptor, conn, bass.getScore());
         ) {
             SchemaDataAccessor accessor = new SchemaDataAccessor(callContext, false);
             assertAll(
@@ -77,20 +75,20 @@ public abstract class BassTest {
 
     @Test
     void testPlan() throws Exception {
-        this.bass.initSystemSchema();
-        DBAdaptor dbAdaptor = bass.dbAdaptor;
+        bass.initSystemSchema();
+        DBAdaptor dbAdaptor = bass.getDbAdaptor();
         assertSysSchema(dbAdaptor);
-        this.bass.close();
+        bass.close();
 
         AppProperties appProperties = getProperties();
-        appProperties.setTask(App.Task.PLAN);
-        this.bass = new Bass(appProperties, ch);
-        this.bass.outputDdlScript();
+        appProperties.setCommand(App.Command.PLAN);
+        bass = new Bass(appProperties, ch);
+        bass.outputDdlScript();
 
-        ConsoleDdlConsumer ddlConsumer = (ConsoleDdlConsumer) this.bass.ddlConsumer;
+        ConsoleDdlConsumer ddlConsumer = (ConsoleDdlConsumer) bass.getDdlConsumer();
 
-        dbAdaptor = bass.dbAdaptor;
-        try (Connection conn = bass.connectionPool.get()) {
+        dbAdaptor = bass.getDbAdaptor();
+        try (Connection conn = bass.getConnectionPool().get()) {
             for (String sql : ddlConsumer.getAllStatements())
                 SqlUtils.executeUpdate(conn, sql);
         }
@@ -99,8 +97,8 @@ public abstract class BassTest {
 
         //Test that no new records were created in schemas table.
         try (
-                Connection conn = bass.connectionPool.get();
-                CallContext callContext = new CallContext(dbAdaptor, conn, bass.score);
+                Connection conn = bass.getConnectionPool().get();
+                CallContext callContext = new CallContext(dbAdaptor, conn, bass.getScore());
         ) {
             SchemaDataAccessor accessor = new SchemaDataAccessor(callContext, false);
             assertAll(
@@ -113,16 +111,16 @@ public abstract class BassTest {
     }
 
     private void assertSysSchema(DBAdaptor dbAdaptor) throws Exception {
-        try (Connection conn = bass.connectionPool.get()) {
+        try (Connection conn = bass.getConnectionPool().get()) {
             assertTrue(dbAdaptor.tableExists(conn, "bass", "schemas"));
         }
     }
 
     private void assertSchema(DBAdaptor dbAdaptor) throws Exception {
         String schemaName = "market";
-        Score s = this.bass.score;
+        Score s = this.bass.getScore();
         Grain g = s.getGrain(schemaName);
-        try (Connection conn = bass.connectionPool.get()) {
+        try (Connection conn = bass.getConnectionPool().get()) {
             assertAll(
                     () -> assertTrue(dbAdaptor.sequenceExists(conn, schemaName, "customers numerator")),
                     () -> assertTrue(dbAdaptor.tableExists(conn, schemaName, "customers")),

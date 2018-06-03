@@ -16,26 +16,22 @@ import java.io.OutputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class Bass implements AutoCloseable {
-
+public final class Bass implements AutoCloseable {
     private final ConsoleHelper consoleHelper;
-    private final DbUpdater dbUpdater;
-    final DBAdaptor dbAdaptor;
-    final ConnectionPool connectionPool;
-    final DdlConsumer ddlConsumer;
-    final Score score;
+    private final AppProperties properties;
+    private DbUpdater dbUpdater;
+    private DBAdaptor dbAdaptor;
+    private ConnectionPool connectionPool;
+    private DdlConsumer ddlConsumer;
+    private Score score;
 
     Bass(AppProperties properties, ConsoleHelper consoleHelper) throws CelestaException, ParseException {
+        this.properties = properties;
         this.consoleHelper = consoleHelper;
-        //SCORE
-        consoleHelper.phase("Parsing SQL scripts");
-        score = new Score.ScoreBuilder<>(Score.class)
-                .path(properties.getScorePath())
-                .scoreDiscovery(new DefaultScoreDiscovery())
-                .build();
-        CurrentScore.set(score);
-        consoleHelper.done();
+        parseSQL();
+    }
 
+    void setupDBConnection() {
         //CONN POOL
         consoleHelper.phase(String.format("Connecting to %s", properties.getJdbcUrl()));
         ConnectionPoolConfiguration cpc = new ConnectionPoolConfiguration();
@@ -55,7 +51,7 @@ public class Bass implements AutoCloseable {
                 .setH2ReferentialIntegrity(true);
 
         boolean updatingIsDisabled = false;
-        if (properties.getTask() == App.Task.PLAN) {
+        if (properties.getCommand() == App.Command.PLAN) {
             updatingIsDisabled = true;
             try {
                 final OutputStream os;
@@ -82,11 +78,23 @@ public class Bass implements AutoCloseable {
         } catch (SQLException e) {
             throw new BassException(e);
         }
-        this.dbUpdater = new DbUpdaterImpl(connectionPool, score, true, this.dbAdaptor, updatingIsDisabled);
+        this.dbUpdater = new DbUpdaterImpl(connectionPool, score, true, dbAdaptor, updatingIsDisabled);
+        consoleHelper.done();
+    }
+
+    private void parseSQL() throws ParseException {
+        //SCORE
+        consoleHelper.phase("Parsing SQL scripts");
+        score = new Score.ScoreBuilder<>(Score.class)
+                .path(properties.getScorePath())
+                .scoreDiscovery(new DefaultScoreDiscovery())
+                .build();
+        CurrentScore.set(score);
         consoleHelper.done();
     }
 
     void initSystemSchema() {
+        setupDBConnection();
         try {
             consoleHelper.phase("Updating system schema");
             dbUpdater.updateSystemSchema();
@@ -97,6 +105,7 @@ public class Bass implements AutoCloseable {
     }
 
     void updateDb() {
+        setupDBConnection();
         try {
             consoleHelper.phase("Updating");
             dbUpdater.updateDb();
@@ -107,6 +116,7 @@ public class Bass implements AutoCloseable {
     }
 
     void outputDdlScript() {
+        setupDBConnection();
         try {
             try (Connection conn = connectionPool.get()) {
                 if (!dbAdaptor.tableExists(conn, score.getSysSchemaName(), SchemaDataAccessor.TABLE_NAME)) {
@@ -124,6 +134,23 @@ public class Bass implements AutoCloseable {
 
     @Override
     public void close() {
-        connectionPool.close();
+        if (connectionPool != null)
+            connectionPool.close();
+    }
+
+    DBAdaptor getDbAdaptor() {
+        return dbAdaptor;
+    }
+
+    ConnectionPool getConnectionPool() {
+        return connectionPool;
+    }
+
+    DdlConsumer getDdlConsumer() {
+        return ddlConsumer;
+    }
+
+    Score getScore() {
+        return score;
     }
 }

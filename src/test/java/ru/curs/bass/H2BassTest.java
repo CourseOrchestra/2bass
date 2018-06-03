@@ -6,7 +6,7 @@ public class H2BassTest extends BassTest {
 
     @AfterEach
      void afterEach() throws Exception {
-        this.bass.connectionPool.get().createStatement().execute("SHUTDOWN");
+        bass.getConnectionPool().get().createStatement().execute("SHUTDOWN");
         super.afterEach();
     }
 

@@ -4,10 +4,13 @@ import info.macias.kaconf.Configurator;
 import info.macias.kaconf.ConfiguratorBuilder;
 import info.macias.kaconf.sources.JavaUtilPropertySource;
 import org.fusesource.jansi.AnsiConsole;
-import ru.curs.celesta.*;
+import ru.curs.celesta.CelestaException;
 import ru.curs.celesta.score.ParseException;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,11 +19,7 @@ import java.util.function.Consumer;
 
 import static org.fusesource.jansi.Ansi.ansi;
 
-
-/**
- * Hello world!
- */
-public class App {
+public final class App {
 
     private static final String PROPERTIES_ENV_KEY = "BASS_PROPERTIES";
 
@@ -37,32 +36,40 @@ public class App {
                     .bold().a("\tjdbc.password").reset().a("\t\t Database password\n")
                     .toString();
 
-    private static final Map<String, Consumer<Bass>> TASKS = new HashMap<>();
+    private static final Map<String, Consumer<Bass>> COMMANDS = new HashMap<>();
+
+    static ConsoleHelper consoleHelper = new ConsoleHelper(System.out);
 
     static {
-        TASKS.put(Task.INIT.toString(), Bass::initSystemSchema);
-        TASKS.put(Task.IMPORT.toString(), Bass::toString); //TODO:
-        TASKS.put(Task.PLAN.toString(), Bass::outputDdlScript);
-        TASKS.put(Task.APPLY.toString(), Bass::updateDb);
+        COMMANDS.put(Command.INIT.toString(), Bass::initSystemSchema);
+        COMMANDS.put(Command.IMPORT.toString(), Bass::toString); //TODO:
+        COMMANDS.put(Command.PLAN.toString(), Bass::outputDdlScript);
+        COMMANDS.put(Command.APPLY.toString(), Bass::updateDb);
+        COMMANDS.put(Command.VALIDATE.toString(), bass -> {
+        });
+    }
+
+    private App() {
+
     }
 
     public static void main(String[] args) {
         AnsiConsole.systemInstall();
-        ConsoleHelper ch = new ConsoleHelper(System.out);
+
         try {
-            ch.info("This is 2bass.");
+            consoleHelper.info("This is 2bass.");
 
             if (args.length == 0) {
-                ch.error("No command was specified.");
-                ch.info(HELP);
+                consoleHelper.error("No command was specified.");
+                consoleHelper.info(HELP);
                 return;
             }
-            String task = args[0];
-            Consumer<Bass> bassConsumer = TASKS.get(task);
+            String cmd = args[0];
+            Consumer<Bass> bassConsumer = COMMANDS.get(cmd);
 
             if (bassConsumer == null) {
-                ch.error("Invalid command was specified.\n");
-                ch.info(HELP);
+                consoleHelper.error("Invalid command was specified.\n");
+                consoleHelper.info(HELP);
             } else {
                 String propertiesPath;
                 if (args.length > 1) {
@@ -75,26 +82,27 @@ public class App {
                 }
                 File propertiesFile = new File(propertiesPath);
                 if (!(propertiesFile.exists() && propertiesFile.canRead())) {
-                    ch.error(String.format("Properties file %s does not exists or cannot be read.%n",
+                    consoleHelper.error(String.format("Properties file %s does not exists or cannot be read.%n",
                             propertiesFile.getAbsolutePath()));
-                    ch.info(HELP);
+                    consoleHelper.info(HELP);
                     return;
                 }
                 AppProperties properties = readProperties(propertiesFile);
-                properties.setTask(Task.getByString(task));
+                properties.setCommand(Command.getByString(cmd));
 
-                try {
-                    Bass bass = new Bass(properties, ch);
+                try (Bass bass = new Bass(properties, consoleHelper)) {
                     bassConsumer.accept(bass);
-                    bass.close();
                 } catch (ParseException | CelestaException | BassException e) {
-                    ch.error(e.getMessage());
+                    consoleHelper.error(e.getMessage());
                     if (properties.isDebug())
                         e.printStackTrace();
                 }
             }
         } finally {
             AnsiConsole.systemUninstall();
+            if (consoleHelper.isError()) {
+                consoleHelper.sysExit(1);
+            }
         }
     }
 
@@ -121,18 +129,19 @@ public class App {
     }
 
 
-    enum Task {
+    enum Command {
         INIT,
         IMPORT,
         PLAN,
-        APPLY;
+        APPLY,
+        VALIDATE;
 
         @Override
         public String toString() {
             return super.toString().toLowerCase();
         }
 
-        static Task getByString(String str) {
+        static Command getByString(String str) {
             return Arrays.stream(values()).filter(
                     v -> v.toString().equals(str)
             ).findFirst().orElse(null);
