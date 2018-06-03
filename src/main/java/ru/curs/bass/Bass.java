@@ -138,7 +138,8 @@ public final class Bass implements AutoCloseable {
 
     @Override
     public void close() {
-        connectionPool.close();
+        if (connectionPool != null)
+            connectionPool.close();
     }
 
     DBAdaptor getDbAdaptor() {
