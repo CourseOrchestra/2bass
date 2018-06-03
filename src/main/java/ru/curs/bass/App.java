@@ -90,10 +90,8 @@ public final class App {
                 AppProperties properties = readProperties(propertiesFile);
                 properties.setCommand(Command.getByString(cmd));
 
-                try {
-                    Bass bass = new Bass(properties, consoleHelper);
+                try (Bass bass = new Bass(properties, consoleHelper)) {
                     bassConsumer.accept(bass);
-                    bass.close();
                 } catch (ParseException | CelestaException | BassException e) {
                     consoleHelper.error(e.getMessage());
                     if (properties.isDebug())
