@@ -85,16 +85,12 @@ public final class Bass implements AutoCloseable {
     private void parseSQL() throws ParseException {
         //SCORE
         consoleHelper.phase("Parsing SQL scripts");
-        score = getScore(properties);
-        CurrentScore.set(score);
-        consoleHelper.done();
-    }
-
-    static Score getScore(AppProperties properties) throws ParseException {
-        return new Score.ScoreBuilder<>(Score.class)
+        score = new Score.ScoreBuilder<>(Score.class)
                 .path(properties.getScorePath())
                 .scoreDiscovery(new DefaultScoreDiscovery())
                 .build();
+        CurrentScore.set(score);
+        consoleHelper.done();
     }
 
     void initSystemSchema() {
