@@ -4,10 +4,13 @@ import info.macias.kaconf.Configurator;
 import info.macias.kaconf.ConfiguratorBuilder;
 import info.macias.kaconf.sources.JavaUtilPropertySource;
 import org.fusesource.jansi.AnsiConsole;
-import ru.curs.celesta.*;
+import ru.curs.celesta.CelestaException;
 import ru.curs.celesta.score.ParseException;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -46,7 +49,7 @@ public final class App {
         });
     }
 
-    private App(){
+    private App() {
 
     }
 
@@ -87,17 +90,10 @@ public final class App {
                 AppProperties properties = readProperties(propertiesFile);
                 properties.setCommand(Command.getByString(cmd));
 
-
                 try {
-                    if (properties.getCommand() == Command.VALIDATE) {
-                        consoleHelper.phase("Parsing SQL scripts");
-                        Bass.getScore(properties);
-                        consoleHelper.done();
-                    } else {
-                        Bass bass = new Bass(properties, consoleHelper);
-                        bassConsumer.accept(bass);
-                        bass.close();
-                    }
+                    Bass bass = new Bass(properties, consoleHelper);
+                    bassConsumer.accept(bass);
+                    bass.close();
                 } catch (ParseException | CelestaException | BassException e) {
                     consoleHelper.error(e.getMessage());
                     if (properties.isDebug())
