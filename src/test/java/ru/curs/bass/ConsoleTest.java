@@ -34,6 +34,29 @@ public class ConsoleTest {
     }
 
     @Test
+    void validCommandInvalidParams() {
+        final StringBuilder sb = new StringBuilder();
+        App.consoleHelper = new MockConsoleHelper(sb::append);
+        assertEquals("1",
+                assertThrows(MockSysExitException.class,
+                        () -> App.main(new String[]{"validate", "--foo"})
+                ).getMessage());
+        System.out.println(sb.toString());
+        assertTrue(sb.toString().contains("Unrecognized option: --foo"));
+    }
+
+    @Test
+    void nonExistentPropertiesFile() {
+        final StringBuilder sb = new StringBuilder();
+        App.consoleHelper = new MockConsoleHelper(sb::append);
+        assertEquals("1",
+                assertThrows(MockSysExitException.class,
+                        () -> App.main(new String[]{"validate", "--propertiesFile=NOTEXISTS"})
+                ).getMessage());
+        assertTrue(sb.toString().contains("does not exists or cannot be read"));
+    }
+
+    @Test
     void validateCommandInvalidScore() throws IOException {
         final StringBuilder sb = new StringBuilder();
         App.consoleHelper = new MockConsoleHelper(sb::append);
@@ -48,7 +71,7 @@ public class ConsoleTest {
             p.store(pw, null);
             assertEquals("1",
                     assertThrows(MockSysExitException.class,
-                            () -> App.main(new String[]{"validate", f.toString()})
+                            () -> App.main(new String[]{"validate", "--propertiesFile=" + f.toString()})
                     ).getMessage());
             assertTrue(sb.toString().contains("Error parsing"));
         } finally {
@@ -69,7 +92,7 @@ public class ConsoleTest {
                         new FileOutputStream(f),
                         StandardCharsets.UTF_8))) {
             p.store(pw, null);
-            App.main(new String[]{"validate", f.toString()});
+            App.main(new String[]{"validate", "--propertiesFile=" + f.toString()});
             assertTrue(consoleHelper.messages.get(0).contains("Parsing SQL scripts"));
             //Only 1 message: 'parsing'.
             assertEquals(1, consoleHelper.messages.size());
@@ -92,7 +115,7 @@ public class ConsoleTest {
                         new FileOutputStream(f),
                         StandardCharsets.UTF_8))) {
             p.store(pw, null);
-            App.main(new String[]{"apply", f.toString()});
+            App.main(new String[]{"apply", "--propertiesFile=" + f.toString()});
             assertTrue(consoleHelper.messages.get(0).contains("Parsing SQL scripts"));
             //3 messages: 'parsing', 'connecting' and 'updating'.
             assertEquals(3, consoleHelper.messages.size());
