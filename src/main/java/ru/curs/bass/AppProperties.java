@@ -2,8 +2,10 @@ package ru.curs.bass;
 
 import info.macias.kaconf.Property;
 
+/**
+ * Bass configuration, this object holds all the runtime options.
+ */
 public final class AppProperties {
-
     @Property("score.path")
     private String scorePath;
     @Property("jdbc.url")
@@ -45,10 +47,11 @@ public final class AppProperties {
     }
 
     public String getJdbcUserName() {
-        if (jdbcUserName == null)
+        if (jdbcUserName == null) {
             return "";
-        else
+        } else {
             return jdbcUserName;
+        }
     }
 
     public void setJdbcUserName(String jdbcUserName) {
@@ -56,10 +59,11 @@ public final class AppProperties {
     }
 
     public String getJdbcPassword() {
-        if (jdbcPassword == null)
+        if (jdbcPassword == null) {
             return "";
-        else
+        } else {
             return jdbcPassword;
+        }
     }
 
     public void setJdbcPassword(String jdbcPassword) {

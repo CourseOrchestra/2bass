@@ -9,10 +9,17 @@ import ru.curs.celesta.score.ParseException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import java.util.function.Consumer;
 
-
+/**
+ * Main class of bass application.
+ */
 public final class App {
 
     private static final Map<String, Consumer<Bass>> COMMANDS = new HashMap<>();
@@ -50,7 +57,7 @@ public final class App {
                 return;
             }
 
-            LinkedList<Properties> configSources = new LinkedList<>();
+            List<Properties> configSources = new LinkedList<>();
             try {
                 Properties props = readOptionsFromArgs(args, optionsParser);
                 configSources.add(props);
@@ -71,8 +78,9 @@ public final class App {
                 bassConsumer.accept(bass);
             } catch (ParseException | CelestaException | BassException e) {
                 consoleHelper.error(e.getMessage());
-                if (properties.isDebug())
+                if (properties.isDebug()) {
                     e.printStackTrace();
+                }
             }
 
         } finally {
@@ -106,8 +114,9 @@ public final class App {
         AppProperties properties = new AppProperties();
 
         ConfiguratorBuilder cb = new ConfiguratorBuilder();
-        for (Properties p : sources)
+        for (Properties p : sources) {
             cb.addSource(new JavaUtilPropertySource(p));
+        }
 
         cb.build().configure(properties);
         return properties;

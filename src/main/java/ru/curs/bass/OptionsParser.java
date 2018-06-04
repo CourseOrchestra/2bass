@@ -1,6 +1,12 @@
 package ru.curs.bass;
 
-import org.apache.commons.cli.*;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -8,19 +14,22 @@ import java.util.Properties;
 
 import static org.fusesource.jansi.Ansi.ansi;
 
-public class OptionsParser {
-
-    private final Options options;
-    private final ConsoleHelper consoleHelper;
-
-    public static final String PROPERTIES_FILE = "propertiesFile";
-    private final static String[][] DESCR = {
+/**
+ * Auxiliary class for parsing command line options.
+ */
+public final class OptionsParser {
+    static final String PROPERTIES_FILE = "propertiesFile";
+    private static final String[][] DESCR = {
             {"score.path", "path", "Path to SQL scripts"},
             {"jdbc.url", "url", "JDBC connection URL"},
             {"jdbc.username", "username", "Database user name"},
             {"jdbc.password", "password", "Database password"},
             {"outputFilePath", "path", "Path to write scripts to (for `plan` command)"},
-            {PROPERTIES_FILE, "path", "Properties file with options (options set in command line have higher priority)"}};
+            {PROPERTIES_FILE, "path",
+                    "Properties file with options (options set in command line have higher priority)"}};
+
+    private final Options options;
+    private final ConsoleHelper consoleHelper;
 
     OptionsParser(ConsoleHelper consoleHelper) {
         this.consoleHelper = consoleHelper;
@@ -32,7 +41,7 @@ public class OptionsParser {
         options.addOption(Option.builder().longOpt("debug").desc("Debug mode: show exception stack traces").build());
     }
 
-    public void help() {
+    void help() {
         consoleHelper.info(
                 ansi().a("Usage: bass <command> <options>").newline()
                         .newline()
@@ -54,7 +63,7 @@ public class OptionsParser {
         consoleHelper.info(sw.toString());
     }
 
-    public Properties getProperties(String[] args) throws BassException {
+    Properties getProperties(String[] args) throws BassException {
         Properties props = new Properties();
         CommandLineParser parser = new DefaultParser();
         try {
