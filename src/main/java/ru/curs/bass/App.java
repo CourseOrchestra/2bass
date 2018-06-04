@@ -16,7 +16,7 @@ import java.util.function.Consumer;
 public final class App {
 
     private static final Map<String, Consumer<Bass>> COMMANDS = new HashMap<>();
-    static ConsoleHelper consoleHelper = new ConsoleHelper(System.out);
+    static ConsoleHelper consoleHelper = new ConsoleHelper(AnsiConsole.out);
 
     static {
         COMMANDS.put(Command.INIT.toString(), Bass::initSystemSchema);
@@ -56,7 +56,7 @@ public final class App {
                 configSources.add(props);
                 String propertiesPath = props.getProperty(OptionsParser.PROPERTIES_FILE);
                 if (propertiesPath != null) {
-                    configSources.addFirst(readOptionsFromFile(propertiesPath));
+                    configSources.add(readOptionsFromFile(propertiesPath));
                 }
             } catch (BassException e) {
                 consoleHelper.error(e.getMessage());
