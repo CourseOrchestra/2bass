@@ -1,6 +1,5 @@
 package ru.curs.bass;
 
-import info.macias.kaconf.Configurator;
 import info.macias.kaconf.ConfiguratorBuilder;
 import info.macias.kaconf.sources.JavaUtilPropertySource;
 import org.fusesource.jansi.AnsiConsole;
@@ -9,36 +8,22 @@ import ru.curs.celesta.score.ParseException;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.function.Consumer;
 
-import static org.fusesource.jansi.Ansi.ansi;
-
+/**
+ * Main class of bass application.
+ */
 public final class App {
 
-    private static final String PROPERTIES_ENV_KEY = "BASS_PROPERTIES";
-
-    private static final String HELP =
-            ansi().a("Usage: bass <command> [properties file]\n")
-                    .a("Available commands are:\n")
-                    .bold().a("\tinit").reset().a("\t\t Init system schema\n")
-                    .bold().a("\tapply").reset().a("\t\t Build or change database structure\n")
-                    .bold().a("\tplan").reset().a("\t\t Generate and show DDL execution plan\n")
-                    .a("Required setup properties are:\n")
-                    .bold().a("\tscore.path").reset().a("\t\t Path to SQL scripts\n")
-                    .bold().a("\tjdbc.url").reset().a("\t\t JDBC connection URL\n")
-                    .bold().a("\tjdbc.username").reset().a("\t\t Database user name\n")
-                    .bold().a("\tjdbc.password").reset().a("\t\t Database password\n")
-                    .toString();
-
     private static final Map<String, Consumer<Bass>> COMMANDS = new HashMap<>();
-
-    static ConsoleHelper consoleHelper = new ConsoleHelper(System.out);
+    static ConsoleHelper consoleHelper = new ConsoleHelper(AnsiConsole.out);
 
     static {
         COMMANDS.put(Command.INIT.toString(), Bass::initSystemSchema);
@@ -55,49 +40,49 @@ public final class App {
 
     public static void main(String[] args) {
         AnsiConsole.systemInstall();
-
+        OptionsParser optionsParser = new OptionsParser(consoleHelper);
         try {
             consoleHelper.info("This is 2bass.");
 
             if (args.length == 0) {
                 consoleHelper.error("No command was specified.");
-                consoleHelper.info(HELP);
+                optionsParser.help();
                 return;
             }
             String cmd = args[0];
             Consumer<Bass> bassConsumer = COMMANDS.get(cmd);
-
             if (bassConsumer == null) {
                 consoleHelper.error("Invalid command was specified.\n");
-                consoleHelper.info(HELP);
-            } else {
-                String propertiesPath;
-                if (args.length > 1) {
-                    propertiesPath = args[1];
-                } else {
-                    propertiesPath = System.getenv(PROPERTIES_ENV_KEY);
-                }
-                if (propertiesPath == null) {
-                    propertiesPath = "bass.properties";
-                }
-                File propertiesFile = new File(propertiesPath);
-                if (!(propertiesFile.exists() && propertiesFile.canRead())) {
-                    consoleHelper.error(String.format("Properties file %s does not exists or cannot be read.%n",
-                            propertiesFile.getAbsolutePath()));
-                    consoleHelper.info(HELP);
-                    return;
-                }
-                AppProperties properties = readProperties(propertiesFile);
-                properties.setCommand(Command.getByString(cmd));
+                optionsParser.help();
+                return;
+            }
 
-                try (Bass bass = new Bass(properties, consoleHelper)) {
-                    bassConsumer.accept(bass);
-                } catch (ParseException | CelestaException | BassException e) {
-                    consoleHelper.error(e.getMessage());
-                    if (properties.isDebug())
-                        e.printStackTrace();
+            List<Properties> configSources = new LinkedList<>();
+            try {
+                Properties props = readOptionsFromArgs(args, optionsParser);
+                configSources.add(props);
+                String propertiesPath = props.getProperty(OptionsParser.PROPERTIES_FILE);
+                if (propertiesPath != null) {
+                    configSources.add(readOptionsFromFile(propertiesPath));
+                }
+            } catch (BassException e) {
+                consoleHelper.error(e.getMessage());
+                return;
+            }
+
+            AppProperties properties = buildConfiguration(configSources);
+
+            properties.setCommand(Command.getByString(cmd));
+
+            try (Bass bass = new Bass(properties, consoleHelper)) {
+                bassConsumer.accept(bass);
+            } catch (ParseException | CelestaException | BassException e) {
+                consoleHelper.error(e.getMessage());
+                if (properties.isDebug()) {
+                    e.printStackTrace();
                 }
             }
+
         } finally {
             AnsiConsole.systemUninstall();
             if (consoleHelper.isError()) {
@@ -106,28 +91,36 @@ public final class App {
         }
     }
 
+    private static Properties readOptionsFromArgs(String[] args, OptionsParser optionsParser) {
+        return optionsParser.getProperties(Arrays.copyOfRange(args, 1, args.length));
+    }
 
-    private static AppProperties readProperties(File propertiesFile) {
-
+    private static Properties readOptionsFromFile(String propertiesPath) {
+        File propertiesFile = new File(propertiesPath);
+        if (!(propertiesFile.exists() && propertiesFile.canRead())) {
+            throw new BassException(String.format("Properties file %s does not exists or cannot be read.%n",
+                    propertiesFile.getAbsolutePath()));
+        }
         try (FileInputStream fis = new FileInputStream(propertiesFile.getAbsolutePath())) {
-            AppProperties properties = new AppProperties();
-
             Properties propsFromFile = new Properties();
             propsFromFile.load(fis);
-            Configurator configurator = new ConfiguratorBuilder()
-                    .addSource(new JavaUtilPropertySource(propsFromFile))
-                    .build();
-
-            configurator.configure(properties);
-            return properties;
-        } catch (FileNotFoundException e) {
-            throw new BassException("There is no properties file on path " + propertiesFile.toString());
+            return propsFromFile;
         } catch (IOException e) {
             throw new BassException(e);
         }
-
     }
 
+    private static AppProperties buildConfiguration(List<Properties> sources) {
+        AppProperties properties = new AppProperties();
+
+        ConfiguratorBuilder cb = new ConfiguratorBuilder();
+        for (Properties p : sources) {
+            cb.addSource(new JavaUtilPropertySource(p));
+        }
+
+        cb.build().configure(properties);
+        return properties;
+    }
 
     enum Command {
         INIT,
@@ -147,4 +140,7 @@ public final class App {
             ).findFirst().orElse(null);
         }
     }
+
 }
+
+

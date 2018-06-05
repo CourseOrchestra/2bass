@@ -22,6 +22,18 @@ public class ConsoleTest {
     }
 
     @Test
+    void exitWithNoOptions() {
+        final StringBuilder sb = new StringBuilder();
+        App.consoleHelper = new MockConsoleHelper(sb::append);
+        assertEquals("1",
+                assertThrows(
+                        MockSysExitException.class,
+                        () -> App.main(new String[]{"validate"})
+                ).getMessage());
+        assertTrue(sb.toString().contains("score.path parameter not provided"));
+    }
+
+    @Test
     void exitWithInvalidParams() {
         final StringBuilder sb = new StringBuilder();
         App.consoleHelper = new MockConsoleHelper(sb::append);
@@ -31,6 +43,29 @@ public class ConsoleTest {
                         () -> App.main(new String[]{"foo"})
                 ).getMessage());
         assertTrue(sb.toString().contains("Invalid command was specified"));
+    }
+
+    @Test
+    void validCommandInvalidParams() {
+        final StringBuilder sb = new StringBuilder();
+        App.consoleHelper = new MockConsoleHelper(sb::append);
+        assertEquals("1",
+                assertThrows(MockSysExitException.class,
+                        () -> App.main(new String[]{"validate", "--foo"})
+                ).getMessage());
+        System.out.println(sb.toString());
+        assertTrue(sb.toString().contains("Unrecognized option: --foo"));
+    }
+
+    @Test
+    void nonExistentPropertiesFile() {
+        final StringBuilder sb = new StringBuilder();
+        App.consoleHelper = new MockConsoleHelper(sb::append);
+        assertEquals("1",
+                assertThrows(MockSysExitException.class,
+                        () -> App.main(new String[]{"validate", "--propertiesFile=NOTEXISTS"})
+                ).getMessage());
+        assertTrue(sb.toString().contains("does not exists or cannot be read"));
     }
 
     @Test
@@ -48,7 +83,7 @@ public class ConsoleTest {
             p.store(pw, null);
             assertEquals("1",
                     assertThrows(MockSysExitException.class,
-                            () -> App.main(new String[]{"validate", f.toString()})
+                            () -> App.main(new String[]{"validate", "--propertiesFile=" + f.toString()})
                     ).getMessage());
             assertTrue(sb.toString().contains("Error parsing"));
         } finally {
@@ -69,7 +104,7 @@ public class ConsoleTest {
                         new FileOutputStream(f),
                         StandardCharsets.UTF_8))) {
             p.store(pw, null);
-            App.main(new String[]{"validate", f.toString()});
+            App.main(new String[]{"validate", "--propertiesFile=" + f.toString()});
             assertTrue(consoleHelper.messages.get(0).contains("Parsing SQL scripts"));
             //Only 1 message: 'parsing'.
             assertEquals(1, consoleHelper.messages.size());
@@ -92,9 +127,43 @@ public class ConsoleTest {
                         new FileOutputStream(f),
                         StandardCharsets.UTF_8))) {
             p.store(pw, null);
-            App.main(new String[]{"apply", f.toString()});
+            App.main(new String[]{"apply", "--propertiesFile=" + f.toString()});
             assertTrue(consoleHelper.messages.get(0).contains("Parsing SQL scripts"));
             //3 messages: 'parsing', 'connecting' and 'updating'.
+            assertEquals(3, consoleHelper.messages.size());
+        } finally {
+            f.delete();
+        }
+    }
+
+    @Test
+    void commandLineOptionOverridesFileParameters() throws IOException {
+        final StringBuilder sb = new StringBuilder();
+        MockConsoleHelper consoleHelper = new MockConsoleHelper(sb::append);
+        App.consoleHelper = consoleHelper;
+        Properties p = new Properties();
+        String scoreResourcePath = "appTestScores/applyScore";
+        p.setProperty("score.path", getClass().getResource(scoreResourcePath).getPath());
+        p.setProperty("jdbc.url", "jdbc:gibberish");
+        File f = File.createTempFile("2basstest", "tmp");
+        try (PrintWriter pw = new PrintWriter(
+                new OutputStreamWriter(
+                        new FileOutputStream(f),
+                        StandardCharsets.UTF_8))) {
+            p.store(pw, null);
+
+            assertEquals("1",
+                    assertThrows(MockSysExitException.class,
+                            () -> App.main(new String[]{"apply", "--propertiesFile=" + f.toString()})
+                    ).getMessage());
+            assertTrue(sb.toString().contains("Could not connect to jdbc:gibberish"));
+
+            consoleHelper = new MockConsoleHelper();
+            App.consoleHelper = consoleHelper;
+            App.main(new String[]{"apply",
+                    "--propertiesFile=" + f.toString(),
+                    "--jdbc.url=jdbc:h2:mem:test;DB_CLOSE_DELAY=-1"});
+            assertEquals(0, consoleHelper.activePhaseCount);
             assertEquals(3, consoleHelper.messages.size());
         } finally {
             f.delete();
