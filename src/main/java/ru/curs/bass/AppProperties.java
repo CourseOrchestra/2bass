@@ -2,9 +2,11 @@ package ru.curs.bass;
 
 import info.macias.kaconf.Property;
 
-public class AppProperties {
-
-    @Property("scorePath")
+/**
+ * Bass configuration, this object holds all the runtime options.
+ */
+public final class AppProperties {
+    @Property("score.path")
     private String scorePath;
     @Property("jdbc.url")
     private String jdbcUrl;
@@ -12,9 +14,22 @@ public class AppProperties {
     private String jdbcUserName = "";
     @Property("jdbc.password")
     private String jdbcPassword = "";
+    @Property("outputFilePath")
+    private String filePath;
+    @Property("debug")
+    private boolean debug;
 
+    private App.Command command;
+
+
+    private void checkValue(Object value, String name) {
+        if (value == null) {
+            throw new BassException(String.format("%s parameter not provided", name));
+        }
+    }
 
     public String getScorePath() {
+        checkValue(scorePath, "score.path");
         return scorePath;
     }
 
@@ -23,6 +38,7 @@ public class AppProperties {
     }
 
     public String getJdbcUrl() {
+        checkValue(jdbcUrl, "jdbc.url");
         return jdbcUrl;
     }
 
@@ -31,7 +47,11 @@ public class AppProperties {
     }
 
     public String getJdbcUserName() {
-        return jdbcUserName;
+        if (jdbcUserName == null) {
+            return "";
+        } else {
+            return jdbcUserName;
+        }
     }
 
     public void setJdbcUserName(String jdbcUserName) {
@@ -39,10 +59,38 @@ public class AppProperties {
     }
 
     public String getJdbcPassword() {
-        return jdbcPassword;
+        if (jdbcPassword == null) {
+            return "";
+        } else {
+            return jdbcPassword;
+        }
     }
 
     public void setJdbcPassword(String jdbcPassword) {
         this.jdbcPassword = jdbcPassword;
+    }
+
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
+
+    public App.Command getCommand() {
+        return command;
+    }
+
+    public void setCommand(App.Command cmd) {
+        this.command = cmd;
+    }
+
+    public boolean isDebug() {
+        return debug;
+    }
+
+    public void setDebug(boolean debug) {
+        this.debug = debug;
     }
 }
