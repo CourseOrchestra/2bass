@@ -14,8 +14,11 @@ import ru.curs.celesta.syscursors.ISchemaCursor;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class SchemaDataAccessor extends CsqlBasicDataAccessor<CallContext> implements ISchemaCursor {
 
@@ -42,7 +45,6 @@ public class SchemaDataAccessor extends CsqlBasicDataAccessor<CallContext> imple
     private ResultSet cursor = null;
 
     private final PreparedStmtHolder findSet;
-
 
 
     public SchemaDataAccessor(CallContext context, boolean updatingIsDisabled) throws CelestaException {
@@ -178,19 +180,14 @@ public class SchemaDataAccessor extends CsqlBasicDataAccessor<CallContext> imple
 
     @Override
     public void get(Object... values) throws CelestaException {
-        try (PreparedStatement stmt = get.getStatement(values, 0)) {
-            ResultSet rs = stmt.executeQuery();
+        try (PreparedStatement stmt = get.getStatement(values, 0);
+             ResultSet rs = stmt.executeQuery()) {
             if (rs.next()) {
                 parseResult(rs);
             } else {
-                StringBuilder sb = new StringBuilder();
-                for (Object value : values) {
-                    if (sb.length() > 0)
-                        sb.append(", ");
-                    sb.append(value == null ? "null" : value.toString());
-                }
+                String sb = Arrays.stream(values).map(Objects::toString).collect(Collectors.joining(", "));
                 if (!updatingIsDisabled)
-                    throw new CelestaException("There is no %s (%s).", meta().getName(), sb.toString());
+                    throw new CelestaException("There is no %s (%s).", meta().getName(), sb);
             }
         } catch (SQLException e) {
             throw new CelestaException(e);
@@ -201,8 +198,6 @@ public class SchemaDataAccessor extends CsqlBasicDataAccessor<CallContext> imple
     public void init() {
         //TODO:!!! Эта абстракция не нужна
     }
-
-
 
 
     @Override
@@ -271,8 +266,8 @@ public class SchemaDataAccessor extends CsqlBasicDataAccessor<CallContext> imple
     }
 
     private Object[] currentValues() {
-        Object[] result = { id != null ? id.replace("\"", "") : null, version, length, checksum, state, lastmodified,
-                message };
+        Object[] result = {id != null ? id.replace("\"", "") : null, version, length, checksum, state, lastmodified,
+                message};
         return result;
     }
 
