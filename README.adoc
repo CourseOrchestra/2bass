@@ -13,7 +13,7 @@ image::images/bass_duke.png[,200]
 
 == Current status
 
-This project is in development phase. No binaries released yet, see <<How to build>> to obtain a binary. If you want to contribute (suggestions/feature requests are very welcome!) please feel free to contact any of the contributors.
+This project is in development phase. For binaries see link:https://github.com/CourseOrchestra/2bass/releases[releases], or see <<How to build>> if you want to build the freshest binary yourself. If you want to contribute (suggestions/feature requests are very welcome!) please feel free to contact any of the contributors.
 
 == How to build from sources
 

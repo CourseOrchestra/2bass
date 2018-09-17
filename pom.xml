@@ -66,8 +66,8 @@
         <dependencies>
             <dependency>
                 <groupId>ru.curs</groupId>
-                <artifactId>celesta</artifactId>
-                <version>6.1-SNAPSHOT</version>
+                <artifactId>celesta-parent</artifactId>
+                <version>6.1.7</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -78,7 +78,7 @@
         <dependency>
             <groupId>ru.curs</groupId>
             <artifactId>celesta-sql</artifactId>
-            <version>6.1-SNAPSHOT</version>
+            <version>6.1.7</version>
         </dependency>
 
         <dependency>
