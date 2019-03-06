@@ -50,6 +50,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!--dependency versions -->
+        <celesta.version>7.1.00</celesta.version>
         <checkstyle.version>8.18</checkstyle.version>
         <junit.version>5.0.0</junit.version>
         <junit.platform.version>1.0.0</junit.platform.version>
@@ -67,7 +68,7 @@
             <dependency>
                 <groupId>ru.curs</groupId>
                 <artifactId>celesta-parent</artifactId>
-                <version>6.1.7</version>
+                <version>${celesta.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -78,7 +79,7 @@
         <dependency>
             <groupId>ru.curs</groupId>
             <artifactId>celesta-sql</artifactId>
-            <version>6.1.7</version>
+            <version>${celesta.version}</version>
         </dependency>
 
         <dependency>

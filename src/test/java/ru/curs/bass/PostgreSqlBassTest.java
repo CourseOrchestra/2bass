@@ -6,11 +6,11 @@ import org.testcontainers.containers.PostgreSQLContainer;
 
 public class PostgreSqlBassTest extends BassTest {
 
-    PostgreSQLContainer postgres;
+    PostgreSQLContainer<?> postgres;
 
     @BeforeEach
     void beforeEach() throws Exception {
-        postgres = new PostgreSQLContainer();
+        postgres = new PostgreSQLContainer<>();
         postgres.start();
         super.beforeEach();
     }

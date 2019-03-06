@@ -6,11 +6,11 @@ import org.testcontainers.containers.MSSQLServerContainer;
 
 public class MsSqlBassTest extends BassTest {
 
-    MSSQLServerContainer mssql;
+    MSSQLServerContainer<?> mssql;
 
     @BeforeEach
     void beforeEach() throws Exception {
-        mssql = new MSSQLServerContainer();
+        mssql = new MSSQLServerContainer<>();
         mssql.start();
         super.beforeEach();
     }

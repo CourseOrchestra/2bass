@@ -98,7 +98,7 @@ public final class App {
     private static Properties readOptionsFromFile(String propertiesPath) {
         File propertiesFile = new File(propertiesPath);
         if (!(propertiesFile.exists() && propertiesFile.canRead())) {
-            throw new BassException(String.format("Properties file %s does not exists or cannot be read.%n",
+            throw new BassException(String.format("Properties file %s does not exist or cannot be read.%n",
                     propertiesFile.getAbsolutePath()));
         }
         try (FileInputStream fis = new FileInputStream(propertiesFile.getAbsolutePath())) {
