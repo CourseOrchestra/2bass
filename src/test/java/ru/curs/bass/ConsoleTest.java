@@ -65,7 +65,7 @@ public class ConsoleTest {
                 assertThrows(MockSysExitException.class,
                         () -> App.main(new String[]{"validate", "--propertiesFile=NOTEXISTS"})
                 ).getMessage());
-        assertTrue(sb.toString().contains("does not exists or cannot be read"));
+        assertTrue(sb.toString().contains("does not exist or cannot be read"));
     }
 
     @Test

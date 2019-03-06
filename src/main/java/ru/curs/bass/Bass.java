@@ -1,13 +1,17 @@
 package ru.curs.bass;
 
-import ru.curs.celesta.*;
+import ru.curs.celesta.CelestaException;
+import ru.curs.celesta.ConnectionPool;
+import ru.curs.celesta.ConnectionPoolConfiguration;
+import ru.curs.celesta.CurrentScore;
+import ru.curs.celesta.DBType;
 import ru.curs.celesta.dbutils.DbUpdater;
 import ru.curs.celesta.dbutils.adaptors.DBAdaptor;
 import ru.curs.celesta.dbutils.adaptors.configuration.DbAdaptorFactory;
 import ru.curs.celesta.dbutils.adaptors.ddl.DdlConsumer;
 import ru.curs.celesta.dbutils.adaptors.ddl.JdbcDdlConsumer;
 import ru.curs.celesta.score.ParseException;
-import ru.curs.celesta.score.discovery.DefaultScoreDiscovery;
+import ru.curs.celesta.score.discovery.ScoreByScorePathDiscovery;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -19,7 +23,7 @@ import java.sql.SQLException;
 public final class Bass implements AutoCloseable {
     private final ConsoleHelper consoleHelper;
     private final AppProperties properties;
-    private DbUpdater dbUpdater;
+    private DbUpdater<?> dbUpdater;
     private DBAdaptor dbAdaptor;
     private ConnectionPool connectionPool;
     private DdlConsumer ddlConsumer;
@@ -86,8 +90,7 @@ public final class Bass implements AutoCloseable {
         //SCORE
         consoleHelper.phase("Parsing SQL scripts");
         score = new Score.ScoreBuilder<>(Score.class)
-                .path(properties.getScorePath())
-                .scoreDiscovery(new DefaultScoreDiscovery())
+                .scoreDiscovery(new ScoreByScorePathDiscovery(properties.getScorePath()))
                 .build();
         CurrentScore.set(score);
         consoleHelper.done();

@@ -161,7 +161,6 @@ public abstract class BassTest {
                     () -> assertEquals("NEXTVAL(customers numerator)", customersId.getDefaultValue()),
                     () -> assertEquals(0, customersId.getLength()),
                     () -> assertFalse(customersId.isMax()),
-                    () -> assertFalse(customersId.isIdentity()),
                     //"name"
                     () -> assertEquals("name", customersName.getName()),
                     () -> assertEquals(StringColumn.class, customersName.getType()),
@@ -169,7 +168,6 @@ public abstract class BassTest {
                     () -> assertEquals("", customersName.getDefaultValue()),
                     () -> assertEquals(30, customersName.getLength()),
                     () -> assertFalse(customersId.isMax()),
-                    () -> assertFalse(customersId.isIdentity()),
                     //"pk_customers"
                     () -> assertEquals("pk_customers", customersPk.getName()),
                     () -> assertEquals(Arrays.asList("id"), customersPk.getColumnNames())
@@ -191,7 +189,6 @@ public abstract class BassTest {
                     () -> assertEquals("", productsShopId.getDefaultValue()),
                     () -> assertEquals(0, productsShopId.getLength()),
                     () -> assertFalse(productsShopId.isMax()),
-                    () -> assertFalse(productsShopId.isIdentity()),
                     //"cost"
                     () -> assertEquals("cost", productsCost.getName()),
                     () -> assertEquals(FloatingColumn.class, productsCost.getType()),
@@ -199,7 +196,6 @@ public abstract class BassTest {
                     () -> assertEquals("", productsCost.getDefaultValue()),
                     () -> assertEquals(0, productsCost.getLength()),
                     () -> assertFalse(productsCost.isMax()),
-                    () -> assertFalse(productsCost.isIdentity()),
                     //"count"
                     () -> assertEquals("count", productsCount.getName()),
                     () -> assertEquals(IntegerColumn.class, productsCount.getType()),
@@ -207,7 +203,6 @@ public abstract class BassTest {
                     () -> assertEquals("", productsCount.getDefaultValue()),
                     () -> assertEquals(0, productsCount.getLength()),
                     () -> assertFalse(productsCount.isMax()),
-                    () -> assertFalse(productsCount.isIdentity()),
                     //"pk_customers"
                     () -> assertEquals("products", productsShopIdFk.getTableName()),
                     () -> assertEquals("market", productsShopIdFk.getRefGrainName()),
@@ -238,7 +233,6 @@ public abstract class BassTest {
                     () -> assertEquals("", ordersOrderDate.getDefaultValue()),
                     () -> assertEquals(0, ordersOrderDate.getLength()),
                     () -> assertFalse(ordersOrderDate.isMax()),
-                    () -> assertFalse(ordersOrderDate.isIdentity()),
                     //"expire_date"
                     () -> assertEquals("expire_date", ordersExpireDate.getName()),
                     () -> assertEquals(DateTimeColumn.class, ordersExpireDate.getType()),
@@ -246,7 +240,6 @@ public abstract class BassTest {
                     () -> assertEquals("", ordersExpireDate.getDefaultValue()),
                     () -> assertEquals(0, ordersExpireDate.getLength()),
                     () -> assertFalse(ordersExpireDate.isMax()),
-                    () -> assertFalse(ordersExpireDate.isIdentity()),
                     //"get_orders_stats" columns
                     //"order_date"
                     () -> assertEquals("order_date", mvOrderDate.getName()),
@@ -255,7 +248,6 @@ public abstract class BassTest {
                     () -> assertEquals("", mvOrderDate.getDefaultValue()),
                     () -> assertEquals(0, mvOrderDate.getLength()),
                     () -> assertFalse(mvOrderDate.isMax()),
-                    () -> assertFalse(mvOrderDate.isIdentity()),
                     //"count"
                     () -> assertEquals("count", mvCount.getName()),
                     () -> assertEquals(IntegerColumn.class, mvCount.getType()),
@@ -263,16 +255,13 @@ public abstract class BassTest {
                     () -> assertEquals("", mvCount.getDefaultValue()),
                     () -> assertEquals(0, mvCount.getLength()),
                     () -> assertFalse(mvCount.isMax()),
-                    () -> assertFalse(mvCount.isIdentity()),
                     //"summary_cost"
                     () -> assertEquals("summary_cost", mvSummaryCost.getName()),
                     () -> assertEquals(FloatingColumn.class, mvSummaryCost.getType()),
                     () -> assertTrue(mvSummaryCost.isNullable()),
                     () -> assertEquals("", mvSummaryCost.getDefaultValue()),
                     () -> assertEquals(0, mvSummaryCost.getLength()),
-                    () -> assertFalse(mvSummaryCost.isMax()),
-                    () -> assertFalse(mvSummaryCost.isIdentity())
-
+                    () -> assertFalse(mvSummaryCost.isMax())
             );
         }
     }

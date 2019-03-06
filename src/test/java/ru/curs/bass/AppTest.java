@@ -4,8 +4,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.curs.celesta.CelestaException;
-import ru.curs.celesta.ConnectionPool;
-import ru.curs.celesta.dbutils.adaptors.DBAdaptor;
 import ru.curs.celesta.score.ParseException;
 
 import java.sql.Connection;
