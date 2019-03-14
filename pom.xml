@@ -50,7 +50,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!--dependency versions -->
-        <checkstyle.version>8.10</checkstyle.version>
+        <checkstyle.version>8.18</checkstyle.version>
         <junit.version>5.0.0</junit.version>
         <junit.platform.version>1.0.0</junit.platform.version>
         <testcontainers.version>1.6.0</testcontainers.version>
