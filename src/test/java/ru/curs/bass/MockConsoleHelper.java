@@ -51,6 +51,8 @@ class MockConsoleHelper extends ConsoleHelper {
 }
 
 class MockSysExitException extends RuntimeException {
+    private static final long serialVersionUID = 1L;
+
     MockSysExitException(int i) {
         super(Integer.toString(i));
     }
