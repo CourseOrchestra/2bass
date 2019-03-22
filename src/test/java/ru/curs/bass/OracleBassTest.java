@@ -13,11 +13,11 @@ public class OracleBassTest extends BassTest {
         Locale.setDefault(Locale.US);
     }
 
-    OracleContainer<?> oracle;
+    OracleContainer oracle;
 
     @BeforeEach
     void beforeEach() throws Exception  {
-        oracle = new OracleContainer<>();
+        oracle = new OracleContainer();
         oracle.start();
         super.beforeEach();
     }
