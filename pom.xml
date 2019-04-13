@@ -50,7 +50,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!--dependency versions -->
-        <celesta.version>7.1.1</celesta.version>
+        <celesta.version>7.1.2</celesta.version>
         <checkstyle.version>8.18</checkstyle.version>
         <junit.version>5.0.0</junit.version>
         <junit.platform.version>1.0.0</junit.platform.version>
@@ -82,6 +82,12 @@
             <artifactId>celesta-sql</artifactId>
             <version>${celesta.version}</version>
         </dependency>
+        <dependency>
+            <groupId>ru.curs</groupId>
+            <artifactId>celesta-system-services</artifactId>
+            <version>${celesta.version}</version>
+        </dependency>
+
 
         <dependency>
             <groupId>org.postgresql</groupId>
