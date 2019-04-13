@@ -3,6 +3,8 @@ package ru.curs.bass;
 import info.macias.kaconf.ConfiguratorBuilder;
 import info.macias.kaconf.sources.JavaUtilPropertySource;
 import org.fusesource.jansi.AnsiConsole;
+
+import ru.curs.bass.ver.BassVersion;
 import ru.curs.celesta.CelestaException;
 import ru.curs.celesta.score.ParseException;
 
@@ -42,7 +44,9 @@ public final class App {
         AnsiConsole.systemInstall();
         OptionsParser optionsParser = new OptionsParser(consoleHelper);
         try {
-            consoleHelper.info("This is 2bass.");
+            consoleHelper.info(
+                    String.format("This is 2bass ver. %s.",
+                                  BassVersion.VERSION != null ? BassVersion.VERSION : "N/A (invalid build?)"));
 
             if (args.length == 0) {
                 consoleHelper.error("No command was specified.");
