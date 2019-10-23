@@ -3,6 +3,8 @@
 image::https://ci.corchestra.ru/buildStatus/icon?job=2bass/dev[link=https://ci.corchestra.ru/job/2bass/job/dev/]
 image:https://api.codacy.com/project/badge/Grade/f26a1fbeb3f341f39594d16ede78d7b9["Codacy code quality", link="https://www.codacy.com/app/CourseOrchestra/2bass?utm_source=github.com&utm_medium=referral&utm_content=CourseOrchestra/2bass&utm_campaign=Badge_Grade"]
 
+image:https://awesome.re/mentioned-badge-flat.svg["Mentioned in Awesome database tools", link=https://github.com/mgramin/awesome-db-tools]
+
 2bass is a database configuration-as-code tool that utilizes the concept of https://dzone.com/articles/trouble-free-database-migration-idempotence-and-co[idempotent DDL scripts].
 
 This is a derivative of link:https://github.com/CourseOrchestra/celesta[Celesta project], in particular, it uses link:https://courseorchestra.github.io/celesta/#CelestaSQL[CelestaSQL] as database definition language. Documentation for CelestaSQL is currently in Russian only, but syntax diagrams for the language are self-explanatory.
