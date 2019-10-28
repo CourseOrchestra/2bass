@@ -52,7 +52,7 @@
         <!--dependency versions -->
         <celesta.version>7.1.2</celesta.version>
         <checkstyle.version>8.18</checkstyle.version>
-        <junit.version>5.0.0</junit.version>
+        <junit.version>5.5.2</junit.version>
         <junit.platform.version>1.0.0</junit.platform.version>
         <testcontainers.version>1.10.7</testcontainers.version>
         <!--plugin versions -->
