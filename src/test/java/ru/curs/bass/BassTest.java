@@ -169,7 +169,7 @@ public abstract class BassTest {
                     () -> assertEquals(30, customersName.getLength()),
                     () -> assertFalse(customersId.isMax()),
                     //"pk_customers"
-                    () -> assertEquals("pk_customers", customersPk.getName()),
+                    () -> assertEquals("pk_customers_market", customersPk.getName()),
                     () -> assertEquals(Arrays.asList("id"), customersPk.getColumnNames())
             );
 
