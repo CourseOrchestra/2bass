@@ -50,11 +50,12 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!--dependency versions -->
-        <celesta.version>7.1.2</celesta.version>
+        <celesta.version>7.2.0</celesta.version>
         <checkstyle.version>8.26</checkstyle.version>
         <junit.version>5.5.2</junit.version>
         <junit.platform.version>1.5.2</junit.platform.version>
         <testcontainers.version>1.12.3</testcontainers.version>
+        <testcontainers.firebird.version>1.0.2</testcontainers.firebird.version>
         <!--plugin versions -->
         <javacc.maven.plugin.version>2.6</javacc.maven.plugin.version>
         <maven.assembly.plugin.version>3.1.0</maven.assembly.plugin.version>
@@ -102,6 +103,11 @@
         <dependency>
             <groupId>com.oracle.weblogic</groupId>
             <artifactId>ojdbc6</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.firebirdsql.jdbc</groupId>
+            <artifactId>jaybird-jdk18</artifactId>
             <scope>compile</scope>
         </dependency>
 
@@ -168,6 +174,13 @@
             <artifactId>mssqlserver</artifactId>
             <version>${testcontainers.version}</version>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.firebirdsql</groupId>
+            <artifactId>firebird-testcontainers-java</artifactId>
+            <version>${testcontainers.firebird.version}</version>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>

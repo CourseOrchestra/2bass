@@ -1,6 +1,7 @@
 package ru.curs.bass;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.curs.celesta.dbutils.adaptors.DBAdaptor;
@@ -169,7 +170,9 @@ public abstract class BassTest {
                     () -> assertEquals(30, customersName.getLength()),
                     () -> assertFalse(customersId.isMax()),
                     //"pk_customers"
-                    () -> assertEquals("pk_customers", customersPk.getName()),
+                    //for dbs that do not support schemas
+                    () -> assertTrue(Arrays.asList("pk_customers", "pk_customers_market")
+                            .contains(customersPk.getName())),
                     () -> assertEquals(Arrays.asList("id"), customersPk.getColumnNames())
             );
 
