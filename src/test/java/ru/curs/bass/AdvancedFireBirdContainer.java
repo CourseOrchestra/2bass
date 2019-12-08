@@ -11,6 +11,10 @@ public class AdvancedFireBirdContainer extends FirebirdContainer<AdvancedFireBir
 
     private static boolean firstStart = true;
 
+    public AdvancedFireBirdContainer() {
+        super("jacobalberty/firebird:4.0");
+    }
+
     @Override
     public void start() {
         super.start();
