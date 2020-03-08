@@ -54,7 +54,7 @@
         <checkstyle.version>8.30</checkstyle.version>
         <junit.version>5.6.0</junit.version>
         <junit.platform.version>1.5.2</junit.platform.version>
-        <testcontainers.version>1.12.5</testcontainers.version>
+        <testcontainers.version>1.13.0</testcontainers.version>
         <testcontainers.firebird.version>1.0.3</testcontainers.firebird.version>
         <!--plugin versions -->
         <javacc.maven.plugin.version>2.6</javacc.maven.plugin.version>
