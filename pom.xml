@@ -50,7 +50,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!--dependency versions -->
-        <celesta.version>7.2.11</celesta.version>
+        <celesta.version>7.2.13</celesta.version>
         <checkstyle.version>8.30</checkstyle.version>
         <junit.version>5.6.0</junit.version>
         <junit.platform.version>1.5.2</junit.platform.version>
@@ -101,7 +101,7 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.oracle.weblogic</groupId>
+            <groupId>com.oracle.database.jdbc</groupId>
             <artifactId>ojdbc6</artifactId>
             <scope>compile</scope>
         </dependency>
