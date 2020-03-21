@@ -1,7 +1,6 @@
 package ru.curs.bass;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.curs.celesta.dbutils.adaptors.DBAdaptor;
@@ -90,8 +89,14 @@ public abstract class BassTest {
 
         dbAdaptor = bass.getDbAdaptor();
         try (Connection conn = bass.getConnectionPool().get()) {
-            for (String sql : ddlConsumer.getAllStatements())
-                SqlUtils.executeUpdate(conn, sql);
+            for (String sql : ddlConsumer.getAllStatements()) {
+                if ("commit".equalsIgnoreCase(sql)) {
+                    conn.commit();
+                } else {
+                    SqlUtils.executeUpdate(conn, sql);
+                }
+            }
+
         }
 
         assertSchema(dbAdaptor);
