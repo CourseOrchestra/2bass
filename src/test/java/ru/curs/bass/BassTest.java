@@ -90,8 +90,14 @@ public abstract class BassTest {
 
         dbAdaptor = bass.getDbAdaptor();
         try (Connection conn = bass.getConnectionPool().get()) {
-            for (String sql : ddlConsumer.getAllStatements())
-                SqlUtils.executeUpdate(conn, sql);
+            for (String sql : ddlConsumer.getAllStatements()) {
+                if ("commit".equalsIgnoreCase(sql)) {
+                    conn.commit();
+                } else {
+                    SqlUtils.executeUpdate(conn, sql);
+                }
+            }
+
         }
 
         assertSchema(dbAdaptor);
