@@ -7,10 +7,9 @@ import ru.curs.celesta.dbutils.adaptors.DBAdaptor;
 
 import java.sql.Connection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
-public class CallContext implements ICallContext {
+public final class CallContext implements ICallContext {
 
     private final  DBAdaptor dbAdaptor;
     private final Connection conn;
