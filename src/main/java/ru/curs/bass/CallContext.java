@@ -48,8 +48,7 @@ public class CallContext implements ICallContext {
     @Override
     public void close() throws CelestaException {
         try {
-            for (Iterator<SchemaDataAccessor> it = dataAccessors.iterator(); it.hasNext();) {
-                CsqlBasicDataAccessor<?> accessor = it.next();
+            for (CsqlBasicDataAccessor<?> accessor : dataAccessors) {
                 accessor.close();
             }
 

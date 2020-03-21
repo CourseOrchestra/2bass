@@ -203,7 +203,7 @@ public class SchemaDataAccessor extends CsqlBasicDataAccessor<CallContext> imple
     @Override
     public boolean nextInSet() throws CelestaException {
 
-        boolean result = false;
+        boolean result;
         try {
             if (cursor == null)
                 result = findSet();
@@ -224,7 +224,7 @@ public class SchemaDataAccessor extends CsqlBasicDataAccessor<CallContext> imple
 
     private boolean findSet() throws CelestaException {
         PreparedStatement ps = findSet.getStatement(currentValues(), 0);
-        boolean result = false;
+        boolean result;
         try {
             if (cursor != null)
                 cursor.close();
