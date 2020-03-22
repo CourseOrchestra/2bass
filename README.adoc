@@ -6,7 +6,7 @@ image:https://awesome.re/mentioned-badge.svg["Mentioned in Awesome database tool
 
 2bass is a database configuration-as-code tool that utilizes the concept of https://dzone.com/articles/trouble-free-database-migration-idempotence-and-co[idempotent DDL scripts].
 
-This is a derivative of link:https://github.com/CourseOrchestra/celesta[Celesta project], in particular, it uses link:https://courseorchestra.github.io/celesta/en/#CelestaSQL[CelestaSQL] as database definition language. Documentation for CelestaSQL is currently in Russian only, but syntax diagrams for the language are self-explanatory.
+This is a derivative of link:https://github.com/CourseOrchestra/celesta[Celesta project], in particular, it uses link:https://courseorchestra.github.io/celesta/en/#CelestaSQL[CelestaSQL] as database definition language.
 
 :toc:
 
