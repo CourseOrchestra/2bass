@@ -64,7 +64,7 @@ All the ALTER commands are calculated and executed automatically. You may run `a
 * Write and modify your database schema using CelestaSQL, which is in fact the plain old DDL.
 Е. g. you may use CREATE TABLE for table definition, and then simply add/modify columns in the script when you need it,
 no 'ALTER' commands in schema definition script. You may also use `EXEC NATIVE` blocks when you need to insert
-database-specific code. See our https://github.com/inponomarev/2bass-demo[demo project] and https://corchestra.ru/wiki/index.php?title=%D0%AF%D0%B7%D1%8B%D0%BA_Celesta-SQL[wiki page] (in Russian, but with nice diagrams) about CelestaSQL.
+database-specific code. See our https://github.com/inponomarev/2bass-demo[demo project] and https://courseorchestra.github.io/celesta/en/#CelestaSQL[CelestaSQL documentation].
 
 * Example outputs for `apply` and `plan` commands:
 
