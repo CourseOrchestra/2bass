@@ -52,7 +52,7 @@
         <!--dependency versions -->
         <celesta.version>7.3.0</celesta.version>
         <checkstyle.version>8.30</checkstyle.version>
-        <junit.version>5.6.0</junit.version>
+        <junit.version>5.6.1</junit.version>
         <junit.platform.version>1.5.2</junit.platform.version>
         <testcontainers.version>1.13.0</testcontainers.version>
         <testcontainers.firebird.version>1.0.3</testcontainers.firebird.version>
