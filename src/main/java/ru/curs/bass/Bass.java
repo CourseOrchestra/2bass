@@ -5,6 +5,7 @@ import ru.curs.celesta.ConnectionPool;
 import ru.curs.celesta.ConnectionPoolConfiguration;
 import ru.curs.celesta.CurrentScore;
 import ru.curs.celesta.DBType;
+import ru.curs.celesta.InternalConnectionPool;
 import ru.curs.celesta.dbutils.DbUpdater;
 import ru.curs.celesta.dbutils.adaptors.DBAdaptor;
 import ru.curs.celesta.dbutils.adaptors.configuration.DbAdaptorFactory;
@@ -46,7 +47,7 @@ public final class Bass implements AutoCloseable {
         cpc.setDriverClassName(dbType.getDriverClassName());
         cpc.setLogin(properties.getJdbcUserName());
         cpc.setPassword(properties.getJdbcPassword());
-        this.connectionPool = ConnectionPool.create(cpc);
+        this.connectionPool = InternalConnectionPool.create(cpc);
 
         //DBA
         DbAdaptorFactory daf = new DbAdaptorFactory()
