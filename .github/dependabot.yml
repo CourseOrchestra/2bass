@@ -6,32 +6,3 @@ updates:
     interval: daily
     time: "02:00"
   open-pull-requests-limit: 10
-  ignore:
-  - dependency-name: ru.curs:celesta-system-services
-    versions:
-    - 7.3.33
-    - 7.3.34
-    - 7.3.35
-    - 7.3.36
-    - 7.3.38
-    - 7.3.40
-  - dependency-name: ru.curs:celesta-sql
-    versions:
-    - 7.3.33
-    - 7.3.34
-    - 7.3.35
-    - 7.3.36
-    - 7.3.38
-    - 7.3.40
-  - dependency-name: ru.curs:celesta-parent
-    versions:
-    - 7.3.33
-    - 7.3.34
-    - 7.3.35
-    - 7.3.36
-    - 7.3.38
-    - 7.3.40
-  - dependency-name: org.fusesource.jansi:jansi
-    versions:
-    - 2.2.0
-    - 2.3.1
