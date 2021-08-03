@@ -51,7 +51,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!--dependency versions -->
         <celesta.version>7.3.46</celesta.version>
-        <checkstyle.version>8.44</checkstyle.version>
+        <checkstyle.version>8.45</checkstyle.version>
         <junit.version>5.7.2</junit.version>
         <junit.platform.version>1.5.2</junit.platform.version>
         <testcontainers.version>1.15.3</testcontainers.version>
