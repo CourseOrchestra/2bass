@@ -8,17 +8,16 @@ import ru.curs.celesta.dbutils.stmt.PreparedStatementHolderFactory;
 import ru.curs.celesta.dbutils.stmt.PreparedStmtHolder;
 import ru.curs.celesta.dbutils.term.AlwaysTrue;
 import ru.curs.celesta.dbutils.term.FromTerm;
-import ru.curs.celesta.score.*;
+import ru.curs.celesta.score.DataGrainElement;
+import ru.curs.celesta.score.ParseException;
+import ru.curs.celesta.score.Table;
 import ru.curs.celesta.syscursors.ISchemaCursor;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class SchemaDataAccessor extends CsqlBasicDataAccessor<CallContext> implements ISchemaCursor {
 
@@ -103,8 +102,9 @@ public class SchemaDataAccessor extends CsqlBasicDataAccessor<CallContext> imple
     }
 
     @Override
-    public void setId(String id) {
+    public SchemaDataAccessor setId(String id) {
         this.id = id;
+        return this;
     }
 
     @Override
@@ -113,8 +113,9 @@ public class SchemaDataAccessor extends CsqlBasicDataAccessor<CallContext> imple
     }
 
     @Override
-    public void setVersion(String version) {
+    public SchemaDataAccessor setVersion(String version) {
         this.version = version;
+        return this;
     }
 
     @Override
@@ -123,8 +124,9 @@ public class SchemaDataAccessor extends CsqlBasicDataAccessor<CallContext> imple
     }
 
     @Override
-    public void setLength(Integer length) {
+    public SchemaDataAccessor setLength(Integer length) {
         this.length = length;
+        return this;
     }
 
     @Override
@@ -133,8 +135,9 @@ public class SchemaDataAccessor extends CsqlBasicDataAccessor<CallContext> imple
     }
 
     @Override
-    public void setChecksum(String checksum) {
+    public SchemaDataAccessor setChecksum(String checksum) {
         this.checksum = checksum;
+        return this;
     }
 
     @Override
@@ -143,8 +146,9 @@ public class SchemaDataAccessor extends CsqlBasicDataAccessor<CallContext> imple
     }
 
     @Override
-    public void setState(Integer state) {
+    public SchemaDataAccessor setState(Integer state) {
         this.state = state;
+        return this;
     }
 
     @Override
@@ -153,8 +157,9 @@ public class SchemaDataAccessor extends CsqlBasicDataAccessor<CallContext> imple
     }
 
     @Override
-    public void setLastmodified(Date lastmodified) {
+    public SchemaDataAccessor setLastmodified(Date lastmodified) {
         this.lastmodified = lastmodified;
+        return this;
     }
 
     public String getMessage() {
@@ -162,15 +167,17 @@ public class SchemaDataAccessor extends CsqlBasicDataAccessor<CallContext> imple
     }
 
     @Override
-    public void setMessage(String message) {
+    public SchemaDataAccessor setMessage(String message) {
         this.message = message;
+        return this;
     }
 
 
     @Override
     public void update() throws CelestaException {
-        if (updatingIsDisabled)
+        if (updatingIsDisabled) {
             return;
+        }
         try (PreparedStatement stmt = update.getStatement(currentValues(), 0)) {
             stmt.execute();
         } catch (SQLException e) {
@@ -179,15 +186,15 @@ public class SchemaDataAccessor extends CsqlBasicDataAccessor<CallContext> imple
     }
 
     @Override
-    public void get(Object... values) throws CelestaException {
-        try (PreparedStatement stmt = get.getStatement(values, 0);
+    public void get(String id) throws CelestaException {
+        try (PreparedStatement stmt = get.getStatement(new String[]{id}, 0);
              ResultSet rs = stmt.executeQuery()) {
             if (rs.next()) {
                 parseResult(rs);
             } else {
-                String sb = Arrays.stream(values).map(Objects::toString).collect(Collectors.joining(", "));
-                if (!updatingIsDisabled)
-                    throw new CelestaException("There is no %s (%s).", meta().getName(), sb);
+                if (!updatingIsDisabled) {
+                    throw new CelestaException("There is no %s (%s).", meta().getName(), id);
+                }
             }
         } catch (SQLException e) {
             throw new CelestaException(e);
@@ -205,9 +212,9 @@ public class SchemaDataAccessor extends CsqlBasicDataAccessor<CallContext> imple
 
         boolean result;
         try {
-            if (cursor == null)
+            if (cursor == null) {
                 result = findSet();
-            else {
+            } else {
                 result = cursor.next();
             }
             if (result) {
@@ -226,8 +233,9 @@ public class SchemaDataAccessor extends CsqlBasicDataAccessor<CallContext> imple
         PreparedStatement ps = findSet.getStatement(currentValues(), 0);
         boolean result;
         try {
-            if (cursor != null)
+            if (cursor != null) {
                 cursor.close();
+            }
             cursor = ps.executeQuery();
             result = cursor.next();
             if (result) {
@@ -251,8 +259,9 @@ public class SchemaDataAccessor extends CsqlBasicDataAccessor<CallContext> imple
 
     @Override
     public void insert() throws CelestaException {
-        if (updatingIsDisabled)
+        if (updatingIsDisabled) {
             return;
+        }
         try (PreparedStatement stmt = insert.getStatement(currentValues(), 0)) {
             stmt.execute();
         } catch (SQLException e) {
@@ -266,9 +275,8 @@ public class SchemaDataAccessor extends CsqlBasicDataAccessor<CallContext> imple
     }
 
     private Object[] currentValues() {
-        Object[] result = {id != null ? id.replace("\"", "") : null, version, length, checksum, state, lastmodified,
-                message};
-        return result;
+        return new Object[]{id != null ? id.replace("\"", "") : null,
+                version, length, checksum, state, lastmodified, message};
     }
 
 }

@@ -28,7 +28,7 @@ public class ConsoleHelper {
         errMessage(message);
     }
 
-    protected void errMessage(String message){
+    protected void errMessage(String message) {
         out.println(ansi().fgBrightRed().a("   ERROR: ").a(message).reset());
     }
 

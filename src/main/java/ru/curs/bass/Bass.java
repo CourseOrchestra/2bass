@@ -62,8 +62,9 @@ public final class Bass implements AutoCloseable {
                 final OutputStream os;
                 if (properties.getFilePath() != null) {
                     File f = new File(properties.getFilePath());
-                    if (!f.getParentFile().exists())
+                    if (!f.getParentFile().exists()) {
                         f.mkdirs();
+                    }
                     os = new FileOutputStream(f);
                     this.ddlConsumer = new OutputStreamDdlConsumer(os);
                 } else {
@@ -78,8 +79,9 @@ public final class Bass implements AutoCloseable {
 
         this.dbAdaptor = daf.createDbAdaptor();
         try (Connection conn = connectionPool.get()) {
-            if (!dbAdaptor.isValidConnection(conn, 10))
+            if (!dbAdaptor.isValidConnection(conn, 10)) {
                 throw new CelestaException("Cannot connect to database.");
+            }
         } catch (SQLException e) {
             throw new BassException(e);
         }
@@ -138,8 +140,9 @@ public final class Bass implements AutoCloseable {
 
     @Override
     public void close() {
-        if (connectionPool != null)
+        if (connectionPool != null) {
             connectionPool.close();
+        }
     }
 
     DBAdaptor getDbAdaptor() {
