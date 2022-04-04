@@ -50,7 +50,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!--dependency versions -->
-        <celesta.version>7.4.8</celesta.version>
+        <celesta.version>7.4.20</celesta.version>
         <checkstyle.version>9.0.1</checkstyle.version>
         <junit.version>5.8.2</junit.version>
         <junit.platform.version>1.5.2</junit.platform.version>
