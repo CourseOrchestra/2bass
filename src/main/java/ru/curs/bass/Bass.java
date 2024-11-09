@@ -44,7 +44,6 @@ public final class Bass implements AutoCloseable {
 
         DBType dbType = DBType.resolveByJdbcUrl(properties.getJdbcUrl());
 
-        cpc.setDriverClassName(dbType.getDriverClassName());
         cpc.setLogin(properties.getJdbcUserName());
         cpc.setPassword(properties.getJdbcPassword());
         this.connectionPool = InternalConnectionPool.create(cpc);
