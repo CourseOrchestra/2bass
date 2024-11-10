@@ -25,4 +25,4 @@ jobs:
           token: ${{ secrets.TC_CLOUD_TOKEN }}
 
       - name: Build and test Celesta
-        run: mvn verify -P dev -pl !celesta-documentation
+        run: mvn verify
