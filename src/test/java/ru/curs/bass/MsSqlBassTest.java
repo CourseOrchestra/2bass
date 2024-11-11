@@ -10,7 +10,7 @@ public class MsSqlBassTest extends BassTest {
 
     @BeforeEach
     void beforeEach() throws Exception {
-        mssql = new MSSQLServerContainer<>();
+        mssql = new MSSQLServerContainer<>("mcr.microsoft.com/mssql/server:2022-CU14-ubuntu-22.04");
         mssql.start();
         super.beforeEach();
     }
