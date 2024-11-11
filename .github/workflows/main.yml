@@ -23,6 +23,9 @@ jobs:
           token: ${{ secrets.TC_CLOUD_TOKEN }}
       - name: Build and test 2Bass
         run: mvn package
+      - name: Get pom version
+        id: pom-version
+        run: echo ::set-output name=version::$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
       - name: Build docker image
         if: success() && github.ref == 'refs/heads/dev'
         run: ./_build-docker.sh
@@ -36,3 +39,4 @@ jobs:
         if: success() && github.ref == 'refs/heads/dev'
         run: |
           docker push curs/2bass:latest
+          docker push curs/2bass:${{ steps.pom-version.outputs.version }}"
