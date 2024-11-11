@@ -36,9 +36,8 @@ public abstract class BassTest {
 
     AppProperties getProperties() {
         AppProperties properties = new AppProperties();
-        String scorePath1 = getClass().getResource("appTestScores/applyScore/s1").getPath();
-        String scorePath2 = getClass().getResource("appTestScores/applyScore/s2").getPath();
-        properties.setScorePath(scorePath1 + File.pathSeparator + scorePath2);
+        String scorePath = getClass().getResource("appTestScores/applyScore").getPath();
+        properties.setScorePath(scorePath);
         return properties;
     }
 

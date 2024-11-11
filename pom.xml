@@ -5,7 +5,7 @@
 
     <groupId>ru.curs</groupId>
     <artifactId>2bass</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.1</version>
     <packaging>jar</packaging>
 
     <name>2bass</name>
@@ -50,12 +50,16 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!--dependency versions -->
-        <celesta.version>7.4.8</celesta.version>
+        <celesta.version>8.0.1</celesta.version>
         <checkstyle.version>9.0.1</checkstyle.version>
         <junit.version>5.8.2</junit.version>
         <junit.platform.version>1.5.2</junit.platform.version>
-        <testcontainers.version>1.15.3</testcontainers.version>
-        <testcontainers.firebird.version>1.1.0</testcontainers.firebird.version>
+        <testcontainers.version>1.20.3</testcontainers.version>
+        <testcontainers.firebird.version>1.4.0</testcontainers.firebird.version>
+        <jdbc.driver.oracle.version>23.5.0.24.07</jdbc.driver.oracle.version>
+        <jdbc.driver.sqlserver.version>12.8.1.jre11</jdbc.driver.sqlserver.version>
+        <jdbc.driver.postgres.version>42.7.4</jdbc.driver.postgres.version>
+        <jdbc.driver.firebird.version>4.0.9.java8</jdbc.driver.firebird.version>
         <!--plugin versions -->
         <javacc.maven.plugin.version>2.6</javacc.maven.plugin.version>
         <maven.assembly.plugin.version>3.3.0</maven.assembly.plugin.version>
@@ -93,28 +97,32 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
+            <version>${jdbc.driver.postgres.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.microsoft.sqlserver</groupId>
             <artifactId>mssql-jdbc</artifactId>
+            <version>${jdbc.driver.sqlserver.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.oracle.database.jdbc</groupId>
-            <artifactId>ojdbc6</artifactId>
+            <artifactId>ojdbc11</artifactId>
+            <version>${jdbc.driver.oracle.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.firebirdsql.jdbc</groupId>
             <artifactId>jaybird-jdk18</artifactId>
+            <version>${jdbc.driver.firebird.version}</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>info.macias</groupId>
             <artifactId>kaconf</artifactId>
-            <version>0.9.0</version>
+            <version>0.9.1</version>
         </dependency>
         <dependency>
             <groupId>org.fusesource.jansi</groupId>
@@ -162,12 +170,13 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>oracle-xe</artifactId>
+
             <version>${testcontainers.version}</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
                     <groupId>com.oracle</groupId>
-                    <artifactId>ojdbc6</artifactId>
+                    <artifactId>ojdbc8</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -180,8 +189,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven.compiler.plugin.version}</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>11</source>
+                    <target>11</target>
                     <encoding>utf-8</encoding>
                 </configuration>
             </plugin>
@@ -299,24 +308,20 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
-                <configuration>
-                    <reportPlugins>
-                        <plugin>
-                            <groupId>com.github.spotbugs</groupId>
-                            <artifactId>spotbugs-maven-plugin</artifactId>
-                            <configuration>
-                                <effort>Max</effort>
-                                <threshold>Low</threshold>
-                            </configuration>
-                        </plugin>
-                    </reportPlugins>
-                </configuration>
             </plugin>
         </plugins>
     </build>
     
     <reporting>
         <plugins>
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <configuration>
+                    <effort>Max</effort>
+                    <threshold>Low</threshold>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>

@@ -17,7 +17,7 @@ public class OracleBassTest extends BassTest {
 
     @BeforeEach
     void beforeEach() throws Exception  {
-        oracle = new OracleContainer();
+        oracle = new OracleContainer("gvenzl/oracle-xe:21.3.0");
         oracle.start();
         super.beforeEach();
     }
