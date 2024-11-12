@@ -39,5 +39,5 @@ jobs:
         if: success() && github.ref == 'refs/heads/dev'
         run: |
           docker push curs/2bass:latest
-          docker image tag curs/2bass curs/${{ steps.pom-version.outputs.version }}
+          docker image tag curs/2bass curs/2bass:{{ steps.pom-version.outputs.version }}
           docker push curs/2bass:${{ steps.pom-version.outputs.version }}
